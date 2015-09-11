@@ -1,0 +1,4 @@
+    public $fieldType get${fieldName}()
+    {
+       return this.$fieldNameCC;
+    }

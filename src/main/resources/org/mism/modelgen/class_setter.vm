@@ -1,0 +1,4 @@
+    public void set${fieldName}($fieldType _$fieldNameCC)
+    {
+       this.$fieldNameCC = _$fieldNameCC;
+    }

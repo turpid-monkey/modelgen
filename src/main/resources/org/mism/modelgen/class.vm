@@ -1,0 +1,36 @@
+package $class.Package.Name;
+
+#foreach( $import in $util.Imports )
+import $import;
+#end
+
+public class ${class.SimpleName}Object implements $class.Name {
+
+#foreach( $method in $util.Fields )
+    $method.ReturnType.SimpleName ${util.fieldNameCC($method)};
+#end
+
+    public ${class.SimpleName}Object(
+#foreach( $method in $util.RequiredFields )
+       $method.ReturnType.SimpleName _${util.fieldNameCC($method)}
+#if ($velocityCount != $util.RequiredFields.size())
+,
+#end
+#end
+    ) {
+#foreach( $method in $util.RequiredFields )
+       set${util.fieldName($method)}(_${util.fieldNameCC($method)});
+#end
+    }
+
+#foreach ( $method in $util.Fields )
+#set ($fieldName = ${util.fieldName($method)})
+#set ($fieldNameCC = ${util.fieldNameCC($method)})
+#set ($fieldType = ${method.ReturnType.SimpleName})
+#parse("class_setter.vm")
+
+#parse("class_getter.vm")
+
+#end
+
+}
