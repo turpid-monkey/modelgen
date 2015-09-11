@@ -2,3 +2,5 @@
 .gradle
 .project
 bin
+.settings
+/build/
