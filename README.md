@@ -30,7 +30,7 @@ The framework provides a basic set of velocity-based templates and can be integr
 |`@Required`|getter method|Valid instances of the model type need to have non-null values for the marked properties| validation code, factory method |
 |`@Containment`|getter method|Defines a parent/child relation between model type and property. The child interface needs to implement `Contained<parent type>` interface.| type implementation: set/unset parent reference, child implementation: accordingly generate Contained code, validation and factory. |
 |`@Types(<list of model types>)`|getter method|For abstract model type properties, limit the amount of available types (by default all)| type implementation: generate typed setters|
-|`@Custom(<invocation handler>)`|any method|Provde a custom implementation for the annotated method, e.g. a java.lang.reflect.InvocationHandler| type implementation: delegates call to invocation handler |
+|`@Custom(<invocation handler>)`|any method|Provde a custom implementation for the annotated method. | type implementation: delegates call to invocation handler |
 
 #### `@Abstract` annotation
 Usage:
