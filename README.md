@@ -80,4 +80,89 @@ public class PersonValidator1 implements Validatelet<Person> {
     }
 }
 ```
+#### `@Containment` annotation
+Usage:
+```java
+interface KeyRing {
+   @Containment Key getKey();
+}
 
+interface Key implements Contained<KeyRing> {
+   int getId();
+}
+```
+The contained type `Key` needs to implement the interface `Contained<KeyRing>`. The code generated for `KeyRing`  sets the container property in `Key`. The parent `KeyRing` instance is handled like a `@Required` property in ModelFactory and validation code for `Key`, but the validation error level is only a warning.
+```java
+public class KeyRingObject implements KeyRing {
+   Key key;
+   public void setKey(key) {
+      if(key!=null) key.setParent(null);
+      key.setParent(this);
+      this.key = key;
+   }
+   // getter method
+}
+
+public class KeyObject implements Key {
+   Key parent; int id;
+   // getter/setter methods
+}
+
+public class ModelFactory {
+   public Key createKey(KeyRing parent);
+}
+
+public class KeyValidator1 implements Validatelet<Key>
+{
+   public void validate(Key t, ValidationContext ctx)
+   {
+      if(t.getParent() == null) ctx.warn("Key is not contained in a KeyRing.");
+   }
+}
+```
+#### `@Types` annotation
+Usage:
+```java
+abstract interface Toy { }
+
+interface Puppet implements Toy {
+}
+
+interface Car implements Toy {
+}
+
+interface Teddy implements Toy {
+}
+
+interface NoCarsToyBox {
+   @Types(Teddy.class, Puppet.class) List<Toy> getToys();
+}
+```
+If a property is of an abstract type, the available types can be restricted to the types defined in the `@Types` annotation.
+```java
+public class NoCarsToyBoxObject implements NoCarsToyBox {
+   List<Toy> toys = new ArrayList<Toy>();
+   public List<Toy> getToys() { return toys.clone(); }
+   public addToy(Puppet p) { toys.add(p); }
+   public addToy(Teddy t) { toys.add(t); }
+}
+```
+### `@Custom` annotation
+Usage:
+```java
+interface Dancer {
+   String getName();
+   @Custom(DanceHandler.class) void dance(Music m);
+}
+```
+The `@Custom` annotation can be used to enrich model interfaces with all kinds of methods.
+
+```java
+public class DancerObject implements Dancer {
+   String name; // +getter/setter
+   DanceHandler danceHandler = new DanceHandler();
+   public void dance(Music m) {
+       danceHandler.dance(this, m);
+   }
+}
+```
