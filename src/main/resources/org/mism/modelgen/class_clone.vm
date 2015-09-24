@@ -1,0 +1,19 @@
+    public $type.typeName shallowClone() {
+        $type.clzzName cl = new ${type.clzzName}();
+#foreach ($prop in $type.properties)
+        cl.$prop.nameCc = this.$prop.nameCc;
+#end
+        return cl;
+    }
+    
+    public $type.typeName deepClone() {
+        $type.clzzName cl = new ${type.clzzName}();
+#foreach ($prop in $type.properties)
+#if ($prop.modelType)
+        cl.$prop.nameCc = ($prop.type) ((org.mism.modelgen.api.Cloneable)this.${prop.nameCc}).deepClone();
+#else
+        cl.$prop.nameCc = this.$prop.nameCc;
+#end
+#end
+        return cl;
+    }
