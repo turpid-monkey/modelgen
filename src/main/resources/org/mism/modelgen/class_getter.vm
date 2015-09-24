@@ -1,4 +1,4 @@
-    public $fieldType get${fieldName}()
+    public $prop.type get${prop.name}()
     {
-       return this.$fieldNameCC;
+       return this.$prop.nameCc;
     }

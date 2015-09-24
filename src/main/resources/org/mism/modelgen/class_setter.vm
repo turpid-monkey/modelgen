@@ -1,4 +1,4 @@
-    public void set${fieldName}($fieldType _$fieldNameCC)
+    public void set${prop.name}($prop.type _$prop.nameCc)
     {
-       this.$fieldNameCC = _$fieldNameCC;
+       this.$prop.nameCc = _$prop.nameCc;
     }

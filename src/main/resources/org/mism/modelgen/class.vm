@@ -1,36 +1,46 @@
-package $class.Package.Name;
+package $type.packageName;
 
-#foreach( $import in $util.Imports )
+import org.mism.modelgen.api.ObjectUtil;
+import org.mism.modelgen.api.HashCode;
+#foreach( $import in $type.imports )
 import $import;
 #end
 
-public class ${class.SimpleName}Object implements $class.Name {
+public class $type.clzzName implements $type.typeName, org.mism.modelgen.api.Cloneable<$type.typeName> {
 
-#foreach( $method in $util.Fields )
-    $method.ReturnType.SimpleName ${util.fieldNameCC($method)};
+#foreach( $prop in $type.properties )
+    $prop.type $prop.nameCc;
 #end
 
-    public ${class.SimpleName}Object(
-#foreach( $method in $util.RequiredFields )
-       $method.ReturnType.SimpleName _${util.fieldNameCC($method)}
-#if ($velocityCount != $util.RequiredFields.size())
+#if ($type.requiredCount > 0)
+    public $type.clzzName (
+#foreach( $prop in $type.required )
+       $prop.type _$prop.nameCc
+#if ($velocityCount < ${type.requiredCount})
 ,
 #end
 #end
     ) {
-#foreach( $method in $util.RequiredFields )
-       set${util.fieldName($method)}(_${util.fieldNameCC($method)});
+#foreach( $prop in $type.required )
+       set${prop.name}(_${prop.nameCc});
 #end
     }
+#end
+ 
+    public $type.clzzName () {}
 
-#foreach ( $method in $util.Fields )
-#set ($fieldName = ${util.fieldName($method)})
-#set ($fieldNameCC = ${util.fieldNameCC($method)})
-#set ($fieldType = ${method.ReturnType.SimpleName})
+#foreach ( $prop in $type.properties )
+
 #parse("class_setter.vm")
+
 
 #parse("class_getter.vm")
 
 #end
+
+#parse("class_clone.vm")
+
+
+#parse("class_equals.vm")
 
 }
