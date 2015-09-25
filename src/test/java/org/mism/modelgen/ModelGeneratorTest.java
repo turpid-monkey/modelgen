@@ -1,7 +1,10 @@
 package org.mism.modelgen;
 
-import static org.junit.Assert.*;
-import groovy.lang.GroovyClassLoader;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 import java.io.StringWriter;
 import java.math.BigInteger;
@@ -9,9 +12,29 @@ import java.math.BigInteger;
 import org.junit.Test;
 import org.mdkt.compiler.InMemoryJavaCompiler;
 import org.mism.modelgen.api.Cloneable;
+import org.mism.modelgen.ifaces.ChildInterface;
+import org.mism.modelgen.ifaces.ExtendingInterface;
+import org.mism.modelgen.ifaces.OtherTestInterface;
+import org.mism.modelgen.ifaces.ParentInterface;
+import org.mism.modelgen.ifaces.TestInterface;
+import org.mism.modelgen.ifaces.TestInterface2;
 
 public class ModelGeneratorTest extends ModelGenerator {
 
+	@Test
+	public void testGenerateExtendingInterface() throws Exception {
+		ExtendingInterface ext = classify(ExtendingInterface.class, OtherTestInterface.class);
+
+		assertNotNull(ext);
+	}
+
+	@Test
+	public void testContainment() throws Exception {
+		ParentInterface parent = classify(ParentInterface.class, ChildInterface.class);
+		
+		assertNotNull(parent);
+	}
+	
 	@Test
 	public void testGenerateClass() throws Exception {
 
@@ -24,9 +47,13 @@ public class ModelGeneratorTest extends ModelGenerator {
 
 		System.out.println(out);
 
-		Class clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.TestInterfaceObject", out.toString());
+		Class<?> clazz = InMemoryJavaCompiler.compile(
+				"org.mism.modelgen.ifaces.TestInterfaceObject", out.toString());
 		TestInterface test = (TestInterface) clazz.newInstance();
+
+		assertEquals(1, t.getRequired().length);
+		assertEquals(1, t.getRequiredCount());
+		assertNotNull(clazz.getConstructor(String.class));
 
 		assertNotNull(test);
 
@@ -41,15 +68,15 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Type t = model.resolve(TestInterface.class);
 		generator.generateType(out, t);
 
-		Class clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.TestInterfaceObject", out.toString());
+		Class<?> clazz = InMemoryJavaCompiler.compile(
+				"org.mism.modelgen.ifaces.TestInterfaceObject", out.toString());
 		TestInterface test = (TestInterface) clazz.newInstance();
 
 		out = new StringWriter();
 		generator.generateType(out, model.resolve(OtherTestInterface.class));
 		System.out.println(out);
-		Class otherClazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.OtherTestInterfaceObject", out.toString());
+		Class<?> otherClazz = InMemoryJavaCompiler.compile(
+				"org.mism.modelgen.ifaces.OtherTestInterfaceObject", out.toString());
 
 		OtherTestInterface other = (OtherTestInterface) otherClazz
 				.newInstance();
@@ -60,7 +87,7 @@ public class ModelGeneratorTest extends ModelGenerator {
 		test.getClass().getMethod("setOther", OtherTestInterface.class)
 				.invoke(test, other);
 
-		TestInterface cloned = (TestInterface) ((Cloneable) test)
+		TestInterface cloned = (TestInterface) ((Cloneable<?>) test)
 				.shallowClone();
 		assertEquals(cloned.getID(), test.getID());
 		assertEquals(cloned.getName(), test.getName());
@@ -77,15 +104,15 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Type t = model.resolve(TestInterface.class);
 		generator.generateType(out, t);
 
-		Class clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.TestInterfaceObject", out.toString());
+		Class<?> clazz = InMemoryJavaCompiler.compile(
+				"org.mism.modelgen.ifaces.TestInterfaceObject", out.toString());
 		TestInterface test = (TestInterface) clazz.newInstance();
 
 		out = new StringWriter();
 		generator.generateType(out, model.resolve(OtherTestInterface.class));
 		System.out.println(out);
-		Class otherClazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.OtherTestInterfaceObject", out.toString());
+		Class<?> otherClazz = InMemoryJavaCompiler.compile(
+				"org.mism.modelgen.ifaces.OtherTestInterfaceObject", out.toString());
 
 		OtherTestInterface other = (OtherTestInterface) otherClazz
 				.newInstance();
@@ -96,7 +123,8 @@ public class ModelGeneratorTest extends ModelGenerator {
 		test.getClass().getMethod("setOther", OtherTestInterface.class)
 				.invoke(test, other);
 
-		TestInterface cloned = (TestInterface) ((Cloneable) test).deepClone();
+		TestInterface cloned = (TestInterface) ((Cloneable<?>) test)
+				.deepClone();
 		assertEquals(cloned.getID(), test.getID());
 		assertEquals(cloned.getName(), test.getName());
 		assertNotSame(cloned, test);
@@ -114,8 +142,8 @@ public class ModelGeneratorTest extends ModelGenerator {
 
 		System.out.println(out);
 
-		Class clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.TestInterfaceObject", out.toString());
+		Class<?> clazz = InMemoryJavaCompiler.compile(
+				"org.mism.modelgen.ifaces.TestInterfaceObject", out.toString());
 		TestInterface test1 = (TestInterface) clazz.newInstance();
 		TestInterface test2 = (TestInterface) clazz.newInstance();
 		test1.getClass().getMethod("setName", String.class)
@@ -139,25 +167,15 @@ public class ModelGeneratorTest extends ModelGenerator {
 
 	@Test
 	public void testHashCode() throws Exception {
-		ModelGenerator generator = new ModelGenerator();
-		StringWriter out = new StringWriter();
-		Model model = new Model();
-		model.init(TestInterface.class, OtherTestInterface.class);
-		Type t = model.resolve(TestInterface.class);
-		generator.generateType(out, t);
 
-		System.out.println(out);
-
-		Class clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.TestInterfaceObject", out.toString());
-		TestInterface test1 = (TestInterface) clazz.newInstance();
+		TestInterface test1 = classify(TestInterface.class);
 		test1.getClass().getMethod("setName", String.class)
 				.invoke(test1, "test");
 		test1.getClass().getMethod("setID", BigInteger.class)
 				.invoke(test1, BigInteger.valueOf(37));
 
 		assertNotEquals(test1.hashCode(), System.identityHashCode(test1));
-		TestInterface clone = (TestInterface) ((Cloneable) test1)
+		TestInterface clone = (TestInterface) ((Cloneable<?>) test1)
 				.shallowClone();
 		assertEquals(test1.hashCode(), clone.hashCode());
 
@@ -166,4 +184,72 @@ public class ModelGeneratorTest extends ModelGenerator {
 
 		assertNotEquals(test1, clone);
 	}
+
+	@Test
+	public void testGenerateFactory() throws Exception {
+		ModelGenerator generator = new ModelGenerator();
+		StringWriter out = new StringWriter();
+		Model model = new Model();
+		model.init(TestInterface.class, OtherTestInterface.class);
+		InMemoryJavaCompiler comp = new InMemoryJavaCompiler();
+
+		Type t = model.resolve(TestInterface.class);
+		StringWriter tout = new StringWriter();
+		generator.generateType(tout, t);
+		comp.addSource("org.mism.modelgen.ifaces.TestInterfaceObject", tout.toString());
+
+		Type ot = model.resolve(OtherTestInterface.class);
+		StringWriter otout = new StringWriter();
+		generator.generateType(otout, ot);
+		comp.addSource("org.mism.modelgen.ifaces.OtherTestInterfaceObject",
+				otout.toString());
+
+		generator.generateFactory(out, model);
+		System.out.println(out);
+
+		comp.addSource("org.mism.modelgen.ifaces.ModelFactory", out.toString());
+		Class<?> clzz = comp.compileAll().get("org.mism.modelgen.ifaces.ModelFactory");
+
+		Object o = clzz.getDeclaredMethod("instance").invoke(null);
+		TestInterface test = (TestInterface) clzz.getMethod(
+				"createTestInterface", String.class).invoke(o, "TEST");
+
+		assertEquals("TEST", test.getName());
+
+	}
+
+	@Test
+	public void testSeveralRequiredProps() throws Exception {
+
+		TestInterface2 test = (TestInterface2) classify(TestInterface2.class);
+
+		assertNotNull(test);
+		assertNotNull(test.getClass()
+				.getConstructor(String.class, String.class));
+	}
+
+	protected static <T> T classify(Class<T> clzz, Class<?>... others)
+			throws Exception {
+		ModelGenerator generator = new ModelGenerator();
+		StringWriter out = new StringWriter();
+		Model model = new Model();
+		if (others != null && others.length != 0) {
+			Class<?>[] classes = new Class<?>[others.length + 1];
+			classes[0] = clzz;
+			System.arraycopy(others, 0, classes, 1, others.length);
+			model.init(classes);
+		} else {
+			model.init(clzz);
+		}
+		Type t = model.resolve(clzz);
+		generator.generateType(out, t);
+
+		System.out.println(out);
+
+		Class<?> clazz = InMemoryJavaCompiler.compile(t.getPackageName() + "."
+				+ t.getClzzName(), out.toString());
+
+		return clzz.cast(clazz.newInstance());
+	}
+
 }

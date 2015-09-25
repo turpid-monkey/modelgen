@@ -4,26 +4,30 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
-
 public class Model {
 
+	String packageName;
 	Map<String, Type> types = new HashMap<String, Type>();
-	Class[] interfaces;
+	Class<?>[] interfaces;
 
-	public void init(Class... interfaces) {
+	public void init(Class<?>... interfaces) {
 		this.interfaces = interfaces;
-		for (Class clzz : interfaces) {
+		for (Class<?> clzz : interfaces) {
 			if (!clzz.isInterface())
 				throw new IllegalArgumentException(
 						"Model may only contain interfaces.");
 			initType(clzz);
 
 		}
+		packageName = interfaces[0].getPackage().getName();
 		// resolve
 	}
 
-	public Type initType(Class clzz) {
+	public String getPackage() {
+		return packageName;
+	}
+
+	public Type initType(Class<?> clzz) {
 		Type t = new Type();
 		types.put(clzz.getName(), t);
 		t.init(clzz, this);
@@ -34,7 +38,7 @@ public class Model {
 		return types.values();
 	}
 
-	public Type resolve(Class clzz) {
+	public Type resolve(Class<?> clzz) {
 		if (types.containsKey(clzz.getName()))
 			return types.get(clzz.getName());
 		else {
@@ -43,9 +47,14 @@ public class Model {
 	}
 
 	public boolean isModelType(String type) {
-		for (Class clzz : interfaces)
-			if (clzz.getSimpleName().equals(type))
+		for (Class<?> clzz : interfaces) {
+			if (clzz.getName().equals(type))
 				return true;
+			for (Class<?> ifc : clzz.getInterfaces()) {
+				if (ifc.getName().equals(type))
+					return true;
+			}
+		}
 		return false;
 	}
 

@@ -1,4 +1,4 @@
-package org.mism.modelgen;
+package org.mism.modelgen.ifaces;
 
 public interface OtherTestInterface {
 	

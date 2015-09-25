@@ -1,19 +1,14 @@
 package org.mism.modelgen;
 
 import java.io.Writer;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.mism.modelgen.api.Required;
 
 public class ModelGenerator {
 
-	public void generate(ResourceSet set, Class... classes) throws Exception {
+	public void generate(ResourceSet set, Class<?>... classes) throws Exception {
 		Model model = new Model();
 		model.init(classes);
 		for (Type t : model.getTypes()) {
@@ -51,7 +46,7 @@ public class ModelGenerator {
 
 		context.put("model", model);
 
-		Velocity.mergeTemplate("builder.vm", "UTF-8", context, out);
+		Velocity.mergeTemplate("factory.vm", "UTF-8", context, out);
 	}
 
 }

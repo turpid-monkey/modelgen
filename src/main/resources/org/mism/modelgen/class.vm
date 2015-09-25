@@ -2,27 +2,26 @@ package $type.packageName;
 
 import org.mism.modelgen.api.ObjectUtil;
 import org.mism.modelgen.api.HashCode;
+import org.mism.modelgen.api.Cloneable;
+import ${type.typeName};
 #foreach( $import in $type.imports )
 import $import;
 #end
 
-public class $type.clzzName implements $type.typeName, org.mism.modelgen.api.Cloneable<$type.typeName> {
+public class $type.clzzName implements $type.simpleName, Cloneable<$type.simpleName> {
 
 #foreach( $prop in $type.properties )
     $prop.type $prop.nameCc;
 #end
 
 #if ($type.requiredCount > 0)
-    public $type.clzzName (
-#foreach( $prop in $type.required )
-       $prop.type _$prop.nameCc
-#if ($velocityCount < ${type.requiredCount})
-,
+    public ${type.clzzName}(##
+#foreach( $prop in $type.required )$prop.type _$prop.nameCc##
+#if ($velocityCount < ${type.requiredCount}), ##
 #end
-#end
-    ) {
+#end) {
 #foreach( $prop in $type.required )
-       set${prop.name}(_${prop.nameCc});
+       this.${prop.nameCc} = _${prop.nameCc};
 #end
     }
 #end

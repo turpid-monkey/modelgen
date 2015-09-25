@@ -3,6 +3,9 @@ package org.mism.modelgen;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.mism.modelgen.ifaces.AbstractInterface;
+import org.mism.modelgen.ifaces.ExtendingInterface;
+import org.mism.modelgen.ifaces.TestInterface;
 
 public class ModelTest {
 

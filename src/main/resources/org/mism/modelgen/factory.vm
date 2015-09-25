@@ -1,0 +1,24 @@
+package $model.package;
+
+#foreach ($type in $model.types)
+import ${model.package}.$type.clzzName;
+#end
+
+public class ModelFactory {
+
+   private static ModelFactory instance;
+   
+   public static ModelFactory instance()
+   {
+      if (instance==null) return instance = new ModelFactory(); else return instance;
+   }
+
+   private ModelFactory() { };
+   
+#foreach ($type in $model.types)
+   public $type.simpleName create${type.simpleName}(#foreach ($prop in $type.required) $prop.type _$prop.nameCc #end) {
+      return new ${type.clzzName}(#foreach ($prop in $type.required) _$prop.nameCc #end);
+   }
+   
+#end
+}

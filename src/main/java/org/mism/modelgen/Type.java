@@ -12,10 +12,11 @@ public class Type {
 	Model model;
 	Collection<String> imports;
 	Collection<Property> properties;
-	Property[] required;
+	private Property[] required;
 	String clzzName;
 	String typeName;
 	String packageName;
+	String simpleName;
 	Type[] ext3nds;
 	boolean abstr4ct;
 
@@ -36,7 +37,7 @@ public class Type {
 	}
 
 	public int getRequiredCount() {
-		return required==null?0:required.length;
+		return getRequired().length;
 	}
 
 	public String getTypeName() {
@@ -55,24 +56,29 @@ public class Type {
 		return abstr4ct;
 	}
 
-	public void init(Class clzz, Model model) {
+	public void init(Class<?> clzz, Model model) {
 		assert clzz.isInterface();
 		this.model = model;
 		properties = initProperties(clzz, model);
 		imports = initImports(clzz, properties);
 		typeName = clzz.getName();
+		simpleName = clzz.getSimpleName();
 		clzzName = clzz.getSimpleName() + "Object";
 		packageName = clzz.getPackage().getName();
 		abstr4ct = clzz.getDeclaredAnnotation(Abstract.class) != null;
 
 		ArrayList<Type> ext3nds = new ArrayList<Type>();
-		for (Class ifs : clzz.getInterfaces()) {
-			ext3nds.add(model.resolve(ifs));
+		for (Class<?> ifs : clzz.getInterfaces()) {
+			Type parent = model.resolve(ifs);
+			properties.addAll(parent.getProperties());
+			imports.addAll(parent.getImports());
+			ext3nds.add(parent);
 		}
 		this.ext3nds = ext3nds.toArray(new Type[ext3nds.size()]);
+		
 	}
 
-	static Collection<String> initImports(Class clzz,
+	static Collection<String> initImports(Class<?> clzz,
 			Collection<Property> properties) {
 		Collection<String> imps = new ArrayList<String>();
 		for (Property m : properties) {
@@ -84,7 +90,7 @@ public class Type {
 		return imps;
 	}
 
-	static Collection<Property> initProperties(Class clzz, Model model) {
+	static Collection<Property> initProperties(Class<?> clzz, Model model) {
 		List<Method> list = new ArrayList<Method>();
 		for (Method m : clzz.getDeclaredMethods()) {
 			if (m.getName().startsWith("get")) {
@@ -95,7 +101,7 @@ public class Type {
 		for (Method m : list) {
 			Property f = new Property();
 			f.init(m);
-			if (model.isModelType(f.getType())) {
+			if (model.isModelType(f.getFQN())) {
 				f.setModelType(true);
 			}
 			props.add(f);
@@ -116,5 +122,9 @@ public class Type {
 
 	public Type[] getExtended() {
 		return ext3nds;
+	}
+	
+	public String getSimpleName() {
+		return simpleName;
 	}
 }

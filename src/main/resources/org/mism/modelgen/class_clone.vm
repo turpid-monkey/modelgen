@@ -1,4 +1,4 @@
-    public $type.typeName shallowClone() {
+    public $type.simpleName shallowClone() {
         $type.clzzName cl = new ${type.clzzName}();
 #foreach ($prop in $type.properties)
         cl.$prop.nameCc = this.$prop.nameCc;
@@ -6,7 +6,7 @@
         return cl;
     }
     
-    public $type.typeName deepClone() {
+    public $type.simpleName deepClone() {
         $type.clzzName cl = new ${type.clzzName}();
 #foreach ($prop in $type.properties)
 #if ($prop.modelType)

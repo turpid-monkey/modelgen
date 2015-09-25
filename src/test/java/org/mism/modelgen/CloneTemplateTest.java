@@ -8,6 +8,8 @@ import java.util.Properties;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.junit.Test;
+import org.mism.modelgen.ifaces.OtherTestInterface;
+import org.mism.modelgen.ifaces.TestInterface;
 
 public class CloneTemplateTest {
 
@@ -27,14 +29,14 @@ public class CloneTemplateTest {
 		context.put("type", t);
 		Velocity.mergeTemplate("class_clone.vm", "UTF-8", context, out);
 
-		assertEquals("    public Object clone() {"
+		assertEquals("    public TestInterface shallowClone() {"
 				+ "        TestInterfaceObject cl = new TestInterfaceObject();"
 				+ "        cl.name = this.name;" + "        cl.iD = this.iD;"
 				+ "        cl.other = this.other;" + "        return cl;"
-				+ "    }" + "    " + "    public Object deepClone() {"
+				+ "    }" + "    " + "    public TestInterface deepClone() {"
 				+ "        TestInterfaceObject cl = new TestInterfaceObject();"
 				+ "        cl.name = this.name;" + "        cl.iD = this.iD;"
-				+ "        cl.other = this.other.deepClone();"
+				+ "        cl.other = (OtherTestInterface) ((org.mism.modelgen.api.Cloneable)this.other).deepClone();"
 				+ "        return cl;" + "    }",
 				out.toString().replace("\n", ""));
 	}

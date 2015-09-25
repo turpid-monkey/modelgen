@@ -1,4 +1,4 @@
-package org.mism.modelgen;
+package org.mism.modelgen.ifaces;
 
 import java.math.BigInteger;
 
