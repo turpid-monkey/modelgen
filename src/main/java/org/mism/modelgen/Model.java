@@ -1,25 +1,36 @@
 package org.mism.modelgen;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class Model {
 
 	String packageName;
 	Map<String, Type> types = new HashMap<String, Type>();
+	Map<Class<?>, Class<?>> containments = new HashMap<Class<?>, Class<?>>();
+	Map<Class<?>, String> containmentNames = new HashMap<Class<?>, String>();
 	Class<?>[] interfaces;
 
 	public void init(Class<?>... interfaces) {
 		this.interfaces = interfaces;
+		Set<String> packages = new HashSet<String>();
 		for (Class<?> clzz : interfaces) {
 			if (!clzz.isInterface())
 				throw new IllegalArgumentException(
 						"Model may only contain interfaces.");
 			initType(clzz);
+			packages.add(clzz.getPackage().getName());
 
 		}
-		packageName = interfaces[0].getPackage().getName();
+		if (packages.size() > 1)
+			throw new IllegalArgumentException(
+					"All interfaces must be from same package, but found "
+							+ packages);
+		packageName = packages.iterator().next();
 		// resolve
 	}
 
@@ -42,8 +53,17 @@ public class Model {
 		if (types.containsKey(clzz.getName()))
 			return types.get(clzz.getName());
 		else {
-			return initType(clzz);
+			if (Arrays.stream(interfaces).anyMatch(ifc -> clzz.equals(ifc)))
+				return initType(clzz);
+			else
+				return null;
 		}
+	}
+
+	public void addContainment(String name, Class<?> container,
+			Class<?> contained) {
+		containments.put(contained, container);
+		containmentNames.put(contained, name);
 	}
 
 	public boolean isModelType(String type) {
@@ -56,6 +76,14 @@ public class Model {
 			}
 		}
 		return false;
+	}
+
+	public Type getContainment(Class<?> clzz) {
+		return resolve(containments.get(clzz));
+	}
+
+	public String getContainmentName(Class<?> clzz) {
+		return containmentNames.get(clzz);
 	}
 
 }

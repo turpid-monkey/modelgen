@@ -1,6 +1,6 @@
 package org.mism.modelgen.api;
 
-public interface Cloneable<T> {
+public interface Clonable<T> {
 
 	T shallowClone();
 

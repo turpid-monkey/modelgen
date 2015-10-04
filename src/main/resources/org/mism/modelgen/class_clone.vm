@@ -10,9 +10,17 @@
         $type.clzzName cl = new ${type.clzzName}();
 #foreach ($prop in $type.properties)
 #if ($prop.modelType)
-        cl.$prop.nameCc = ($prop.type) ((org.mism.modelgen.api.Cloneable)this.${prop.nameCc}).deepClone();
+        cl.$prop.nameCc = ($prop.declaration) ((Clonable)this.${prop.nameCc}).deepClone();
+#else
+#if ($prop.collection)
+        cl.$prop.nameCc = new ContainedList<${type.simpleName}, ${prop.containedType}>("${prop.name}", cl);
+        for (${prop.containedType} elem : this.${prop.nameCc})
+        {
+           cl.${prop.nameCc}.add( (${prop.containedType}) ((Clonable)elem).deepClone() );
+        }
 #else
         cl.$prop.nameCc = this.$prop.nameCc;
+#end
 #end
 #end
         return cl;

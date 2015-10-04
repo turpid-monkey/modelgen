@@ -9,18 +9,27 @@ public final class HashCode {
 		this.factor = factor;
 		this.nullConstant = nullConstant;
 	}
+	
+	public HashCode()
+	{
+		this(31,13);
+	}
 
 	public HashCode hash(Object o) {
-		if (o == null)
+		if (o == null) {
 			return hashNull();
-		if (o.getClass().isArray()) {
+		} else if (o instanceof Iterable) {
+			return hash((Iterable<?>) o);
+		} else if (o.getClass().isArray()) {
 			if (o.getClass().isPrimitive())
 				return hashPrimitiveArray(o);
 			else
 				return hash((Object[]) o);
+		} else {
+			hashCode *= factor;
+			hashCode += o.hashCode();
+			return this;
 		}
-		hashCode = factor * hashCode + o.hashCode();
-		return this;
 	}
 
 	protected HashCode hashPrimitiveArray(Object object) {
@@ -42,11 +51,12 @@ public final class HashCode {
 			return hash((boolean[]) object);
 		}
 		throw new RuntimeException(
-				"Should never reach - check hashCode() implementation.");
+				"Should never reach - check HashCode implementation.");
 	}
 
 	protected HashCode hashNull() {
-		hashCode = factor * hashCode + nullConstant;
+		hashCode *= factor;
+		hashCode += nullConstant;
 		return this;
 	}
 
@@ -58,12 +68,20 @@ public final class HashCode {
 		return this;
 	}
 
+	public HashCode hash(Iterable<?> iterable) {
+		for (Object elem : iterable) {
+			hash(elem);
+		}
+		return this;
+	}
+
 	public int value() {
 		return hashCode;
 	}
 
 	public HashCode hash(long value) {
-		hashCode = hashCode * factor + ((int) (value ^ (value >> 32)));
+		hashCode *= factor;
+		hashCode += ((int) (value ^ (value >> 32)));
 		return this;
 	}
 

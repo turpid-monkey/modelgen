@@ -1,0 +1,11 @@
+    ${type.container.simpleName} parent;
+    
+    public void setParent(${type.container.simpleName} _parent)
+    {
+       this.parent = _parent;
+    }
+    
+    public ${type.container.simpleName} getParent()
+    {
+       return parent;
+    }

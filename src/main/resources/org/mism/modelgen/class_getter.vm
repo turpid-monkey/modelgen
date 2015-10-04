@@ -1,4 +1,4 @@
-    public $prop.type get${prop.name}()
+    public $prop.declaration get${prop.name}()
     {
        return this.$prop.nameCc;
     }

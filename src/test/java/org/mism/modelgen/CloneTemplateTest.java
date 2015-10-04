@@ -36,7 +36,7 @@ public class CloneTemplateTest {
 				+ "    }" + "    " + "    public TestInterface deepClone() {"
 				+ "        TestInterfaceObject cl = new TestInterfaceObject();"
 				+ "        cl.name = this.name;" + "        cl.iD = this.iD;"
-				+ "        cl.other = (OtherTestInterface) ((org.mism.modelgen.api.Cloneable)this.other).deepClone();"
+				+ "        cl.other = (OtherTestInterface) ((Clonable)this.other).deepClone();"
 				+ "        return cl;" + "    }",
 				out.toString().replace("\n", ""));
 	}

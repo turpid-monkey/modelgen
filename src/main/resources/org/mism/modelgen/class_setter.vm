@@ -1,4 +1,9 @@
-    public void set${prop.name}($prop.type _$prop.nameCc)
+    public void set${prop.name}($prop.declaration _$prop.nameCc)
     {
+#if ($prop.container)
+       this.${prop.nameCc}.clear();
+       this.${prop.nameCc}.addAll(_${prop.nameCc});
+#else
        this.$prop.nameCc = _$prop.nameCc;
+#end
     }

@@ -16,9 +16,22 @@ public class ModelFactory {
    private ModelFactory() { };
    
 #foreach ($type in $model.types)
-   public $type.simpleName create${type.simpleName}(#foreach ($prop in $type.required) $prop.type _$prop.nameCc #end) {
+#if ($type.contained)##
+   public $type.simpleName add${type.simpleName}To${type.container.simpleName}( $type.container.simpleName _parent )
+   {
+      $type.simpleName n = new ${type.clzzName}();
+      _parent.get${type.containmentName}().add(n);
+      return n;
+   }
+   
+#else
+   public $type.simpleName create${type.simpleName}(##
+#foreach ($prop in $type.required) $prop.type _$prop.nameCc ##
+#end##
+) {
       return new ${type.clzzName}(#foreach ($prop in $type.required) _$prop.nameCc #end);
    }
    
+#end   
 #end
 }
