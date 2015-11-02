@@ -11,7 +11,6 @@ import java.util.ListIterator;
 public class ContainedList<P, T extends Contained<P>> implements List<T> {
 
 	private final List<T> delegate;
-	private final PropertyChangeSupport pcs;
 	private final String name;
 	private final P container;
 
@@ -23,7 +22,6 @@ public class ContainedList<P, T extends Contained<P>> implements List<T> {
 		this.name = name;
 		this.delegate = delegate;
 		this.container = container;
-		this.pcs = new PropertyChangeSupport(this);
 	}
 
 	public List<T> getContent() {
@@ -74,6 +72,17 @@ public class ContainedList<P, T extends Contained<P>> implements List<T> {
 		return delegate.contains(o);
 	}
 
+	public boolean replaceContent(Collection<? extends T> c) {
+		if (!delegate.equals(c)) {
+			delegate.clear();
+			delegate.addAll((Collection<? extends T>) c);
+
+			fireCumulateChangeEvent();
+			return true;
+		}
+		return false;
+	}
+
 	public boolean containsAll(Collection<?> c) {
 		return delegate.containsAll(c);
 	}
@@ -99,7 +108,7 @@ public class ContainedList<P, T extends Contained<P>> implements List<T> {
 	}
 
 	public Iterator<T> iterator() {
-		return new NotifyingIterator<>(delegate.iterator(), pcs, name);
+		return new NotifyingIterator<>(delegate.iterator(), ((Mutable)container).getChangeSupport(), name);
 	}
 
 	public int lastIndexOf(Object o) {
@@ -168,7 +177,7 @@ public class ContainedList<P, T extends Contained<P>> implements List<T> {
 
 	protected void fireIndexedPropertyChangeEvent(int index, T oldValue,
 			T newValue) {
-		pcs.fireIndexedPropertyChange(name, index, oldValue, newValue);
+		((Mutable)container).fireIndexedPropertyChange(name, index, oldValue, newValue);
 	}
 
 	private void fireCumulateChangeEvent() {
@@ -189,16 +198,16 @@ public class ContainedList<P, T extends Contained<P>> implements List<T> {
 
 	@Override
 	public ListIterator<T> listIterator() {
-		return new NotifyingListIterator<T>(delegate.listIterator(), pcs, name);
+		return new NotifyingListIterator<T>(delegate.listIterator(), ((Mutable)container).getChangeSupport(), name);
 	}
 
 	@Override
 	public ListIterator<T> listIterator(int index) {
-		return new NotifyingListIterator<T>(delegate.listIterator(index), pcs,
+		return new NotifyingListIterator<T>(delegate.listIterator(index), ((Mutable)container).getChangeSupport(),
 				name);
 	}
 
 	public PropertyChangeSupport getPropertyChangeSupport() {
-		return pcs;
+		return ((Mutable)container).getChangeSupport();
 	}
 }

@@ -1,4 +1,15 @@
     public $prop.declaration get${prop.name}()
     {
+#if ($prop.containedType)
+       return this.${prop.nameCc}.getContent();
+#else
+       return this.$prop.nameCc;
+#end
+    }
+    
+#if ($prop.containedType)
+    public ContainedList<$type.simpleName,${prop.containedType}> get${prop.name}Ref()
+    {
        return this.$prop.nameCc;
     }
+#end

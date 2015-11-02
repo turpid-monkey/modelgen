@@ -1,3 +1,5 @@
+    // start Clonable implementation
+    
     public $type.simpleName shallowClone() {
         $type.clzzName cl = new ${type.clzzName}();
 #foreach ($prop in $type.properties)
@@ -25,3 +27,5 @@
 #end
         return cl;
     }
+    
+    // end Clonable implementation

@@ -1,17 +1,20 @@
 package $type.packageName;
 
 import org.mism.modelgen.api.*;
+import java.beans.PropertyChangeSupport;
 import ${type.typeName};
 #foreach( $import in $type.imports )
 import $import;
 #end
 
-public class $type.clzzName implements $type.simpleName, Clonable<$type.simpleName> {
+public class $type.clzzName implements $type.simpleName, Clonable<$type.simpleName>, Mutable {
 
 #foreach( $prop in $type.properties )
-    $prop.declaration $prop.nameCc##
-#if($prop.container)= new ContainedList<$type.simpleName,${prop.containedType}>("${prop.name}", this)##
-#end;
+#if($prop.containedType)
+    ContainedList<$type.simpleName,${prop.containedType}> $prop.nameCc = new ContainedList<$type.simpleName,${prop.containedType}>("${prop.name}", this);
+#else
+    $prop.declaration $prop.nameCc;
+#end
 #end
 
 #if ($type.requiredCount > 0)
@@ -47,5 +50,7 @@ public class $type.clzzName implements $type.simpleName, Clonable<$type.simpleNa
 #parse("class_containedimpl.vm")
 
 #end
+
+#parse("class_mutable.vm")
 
 }

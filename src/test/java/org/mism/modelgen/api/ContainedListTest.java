@@ -1,25 +1,33 @@
 package org.mism.modelgen.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.beans.IndexedPropertyChangeEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.mism.modelgen.ifaces.ChildInterface;
 import org.mism.modelgen.ifaces.ParentInterface;
 
 public class ContainedListTest {
 
-	class Parent implements ParentInterface {
+	class Parent implements ParentInterface, Mutable {
 		ContainedList<ParentInterface, ChildInterface> children = new ContainedList<ParentInterface, ChildInterface>(
 				"children", this);
 
+		PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+		
 		@Override
 		public Collection<ChildInterface> getChildren() {
 			return children;
@@ -28,6 +36,12 @@ public class ContainedListTest {
 		protected ContainedList<ParentInterface, ChildInterface> children() {
 			return children;
 		}
+
+		@Override
+		public PropertyChangeSupport getChangeSupport() {
+			return pcs;
+		}
+
 
 	}
 
@@ -228,6 +242,20 @@ public class ContainedListTest {
 			assertEquals("All is well!", e.getMessage());
 			assertEquals(0, parent.children().size());
 		}
+	}
+
+	@Test
+	public void testReplaceContent() {
+		Parent parent = new Parent();
+		Child child1 = new Child(), child2 = new Child(), child3 = new Child();
+		parent.children().add(child1);
+		parent.children().add(child2);
+
+		assertFalse(parent.children().replaceContent(
+				Arrays.asList(child1, child2)));
+		assertTrue(parent.children().replaceContent(
+				Arrays.asList(child2, child3)));
+		assertTrue(parent.children().equals(Arrays.asList(child2, child3)));
 	}
 
 	@Test
