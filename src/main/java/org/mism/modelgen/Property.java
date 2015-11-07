@@ -23,7 +23,8 @@ public class Property {
 		this.parent = parent;
 		name = Type.propertyName(m);
 		nameCc = Type.propertyNameCC(m);
-		collection = (m.getDeclaredAnnotation(Containment.class) != null) || Collection.class.equals(m.getReturnType());
+		collection = (m.getDeclaredAnnotation(Containment.class) != null)
+				|| Collection.class.equals(m.getReturnType());
 		if (collection) {
 			ParameterizedType retType = (ParameterizedType) m
 					.getGenericReturnType();
@@ -34,7 +35,10 @@ public class Property {
 		}
 		type = m.getReturnType().getSimpleName();
 
-		pkg = m.getReturnType().getPackage().getName();
+		if (m.getReturnType().getPackage() != null)
+			pkg = m.getReturnType().getPackage().getName();
+		else
+			pkg = "java.lang";
 
 		required = (m.getDeclaredAnnotation(Required.class) != null);
 
@@ -104,13 +108,12 @@ public class Property {
 	public void setContainerType(Type type) {
 		this.containerType = type;
 	}
-	
+
 	public Type getContainerType() {
 		return containerType;
 	}
 
-	public boolean hasContainer()
-	{
+	public boolean hasContainer() {
 		return this.containerType != null;
 	}
 }

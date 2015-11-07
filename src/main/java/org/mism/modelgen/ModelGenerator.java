@@ -48,5 +48,33 @@ public class ModelGenerator {
 
 		Velocity.mergeTemplate("factory.vm", "UTF-8", context, out);
 	}
+	
+	public void generateVisitor(Writer out, Model model) throws Exception {
+		Properties props = new Properties();
+		props.setProperty("file.resource.loader.path", ModelGenerator.class
+				.getResource(".").getFile());
+
+		Velocity.init(props);
+
+		VelocityContext context = new VelocityContext();
+
+		context.put("model", model);
+
+		Velocity.mergeTemplate("visitor.vm", "UTF-8", context, out);
+	}
+	
+	public void generateCommands(Writer out, Model model) throws Exception {
+		Properties props = new Properties();
+		props.setProperty("file.resource.loader.path", ModelGenerator.class
+				.getResource(".").getFile());
+		Velocity.init(props);
+
+		VelocityContext context = new VelocityContext();
+
+		context.put("model", model);
+
+		Velocity.mergeTemplate("commands.vm", "UTF-8", context, out);
+	
+	}
 
 }

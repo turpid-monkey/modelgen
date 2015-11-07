@@ -29,7 +29,7 @@ public class CloneTemplateTest {
 		context.put("type", t);
 		Velocity.mergeTemplate("class_clone.vm", "UTF-8", context, out);
 
-		assertEquals("    public TestInterface shallowClone() {"
+		assertEquals("    // start Clonable implementation        public TestInterface shallowClone() {"
 				+ "        TestInterfaceObject cl = new TestInterfaceObject();"
 				+ "        cl.name = this.name;" + "        cl.iD = this.iD;"
 				+ "        cl.other = this.other;" + "        return cl;"
@@ -37,7 +37,7 @@ public class CloneTemplateTest {
 				+ "        TestInterfaceObject cl = new TestInterfaceObject();"
 				+ "        cl.name = this.name;" + "        cl.iD = this.iD;"
 				+ "        cl.other = (OtherTestInterface) ((Clonable)this.other).deepClone();"
-				+ "        return cl;" + "    }",
+				+ "        return cl;" + "    }        // end Clonable implementation",
 				out.toString().replace("\n", ""));
 	}
 

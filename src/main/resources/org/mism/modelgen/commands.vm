@@ -1,0 +1,57 @@
+package $model.package;
+
+import org.mism.command.CommandFactory;
+import org.mism.command.Command;
+import org.mism.command.CommandTemplate;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Collection;
+#foreach ($type in $model.types)
+import ${model.package}.$type.clzzName;
+#end
+
+public class ModelCommandFactory implements CommandFactory
+{
+    Map<Class<?>, List<Class<? extends CommandTemplate<?>>>> modelCommands = new HashMap<Class<?>, List<Class<? extends CommandTemplate<?>>>>();
+
+#foreach ($type in $model.types)##
+    // start Type $type.simpleName
+#foreach ($prop in $type.properties)
+    private class Change${prop.name}In${type.simpleName} implements CommandTemplate<$type.simpleName>
+    {
+        ${prop.type} oldValue, newValue;
+        $type.clzzName target;
+    
+        public boolean canUndo()
+        {
+           return true;
+        }
+        
+        public void execute()
+        {
+           target.set${prop.name}(newValue);
+        }
+        public void rollback()
+        {
+           target.set${prop.name}(oldValue);
+        }
+        public void prepare($type.simpleName obj)
+        {
+           target = ($type.clzzName) obj;
+           oldValue = obj.get${prop.name}();
+        }
+        public void setNewValue($prop.type _newValue) {
+           newValue = _newValue;
+        }
+    }
+#end
+    // end Type $type.simpleName
+#end
+
+    public List<Class<? extends CommandTemplate<?>>> getCommandTemplates(Class<?> modelClass)
+    {
+        return modelCommands.get(modelClass);
+    }
+
+}
