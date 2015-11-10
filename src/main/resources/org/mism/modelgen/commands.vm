@@ -9,6 +9,7 @@ import org.mism.command.templates.RemoveElementCommandTemplate;
 import org.mism.command.templates.ClearElementsCommandTemplate;
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collection;
 #foreach ($type in $model.types)
@@ -17,7 +18,7 @@ import ${model.package}.$type.clzzName;
 
 public class ModelCommandFactory implements CommandFactory
 {
-    Map<Class<?>, List<Class<? extends CommandTemplate<?>>>> modelCommands = new HashMap<Class<?>, List<Class<? extends CommandTemplate<?>>>>();
+    static Map<Class<?>, List<Class<? extends CommandTemplate<?>>>> modelCommands = new HashMap<Class<?>, List<Class<? extends CommandTemplate<?>>>>();
 
 #foreach ($type in $model.types)##
     // start Type $type.simpleName
@@ -47,6 +48,9 @@ public class ModelCommandFactory implements CommandFactory
 #end
         // end proxy getters and setters
     }
+    static {
+        addCommand(${type.simpleName}.class, AddElementTo${type.simpleName}${prop.name}.class);
+    }
     
     public static class RemoveElementFrom${type.simpleName}${prop.name} extends RemoveElementCommandTemplate<$type.clzzName, $prop.containedType>
     {
@@ -55,6 +59,9 @@ public class ModelCommandFactory implements CommandFactory
             this.object = object;
             this.collectionRef = object.get${prop.name}Ref();
         }
+    }
+    static {
+        addCommand(${type.simpleName}.class, RemoveElementFrom${type.simpleName}${prop.name}.class);
     }
     
     public static class Clear${type.simpleName}${prop.name} extends ClearElementsCommandTemplate<${type.clzzName}, ${prop.containedType}>
@@ -65,6 +72,9 @@ public class ModelCommandFactory implements CommandFactory
             this.collectionRef = object.get${prop.name}Ref();
             this.collectionClone = object.get${prop.name}();
         }
+    }
+    static {
+        addCommand(${type.simpleName}.class, Clear${type.simpleName}${prop.name}.class);
     }
 #else
     public static class Modify${type.simpleName}${prop.name} extends ModifyCommandTemplate<$type.clzzName, $prop.type>
@@ -83,10 +93,20 @@ public class ModelCommandFactory implements CommandFactory
            oldValue = obj.get${prop.name}();
         }
     }
+    static {
+        addCommand(${type.simpleName}.class, Modify${type.simpleName}${prop.name}.class);
+    }
 #end
 #end
     // end Type $type.simpleName
 #end
+
+    static void addCommand(Class<?> clzz, Class<? extends CommandTemplate<?>> template)
+    {
+        if (modelCommands.get(clzz)==null)
+        	modelCommands.put(clzz, new ArrayList<Class<? extends CommandTemplate<?>>>());
+        modelCommands.get(clzz).add(template);
+    }
 
     public List<Class<? extends CommandTemplate<?>>> getCommandTemplates(Class<?> modelClass)
     {
