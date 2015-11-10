@@ -31,7 +31,7 @@ public class Model {
 					"All interfaces must be from same package, but found "
 							+ packages);
 		packageName = packages.iterator().next();
-		// resolve
+		// 
 	}
 
 	public String getPackage() {
@@ -58,6 +58,10 @@ public class Model {
 			else
 				return null;
 		}
+	}
+
+	public Type resolve(String clzzName) {
+		return types.get(clzzName);
 	}
 
 	public void addContainment(String name, Class<?> container,

@@ -4,7 +4,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.mism.modelgen.ifaces.AbstractInterface;
+import org.mism.modelgen.ifaces.ChildInterface;
 import org.mism.modelgen.ifaces.ExtendingInterface;
+import org.mism.modelgen.ifaces.ParentInterface;
 import org.mism.modelgen.ifaces.TestInterface;
 
 public class ModelTest {
@@ -27,9 +29,21 @@ public class ModelTest {
 
 		model.init(ExtendingInterface.class, AbstractInterface.class,
 				TestInterface.class);
-		
+
 		Type t = model.resolve(ExtendingInterface.class);
 		assertEquals(2, t.getExtended().length);
+	}
+
+	@Test
+	public void testModelResolutionOfContainedTypes() {
+		Model model = new Model();
+
+		model.init(ParentInterface.class, ChildInterface.class);
+
+		Type t = model.resolve(ParentInterface.class);
+		assertEquals(1, t.getProperties().size());
+		assertEquals("ChildInterfaceObject", t.getProperties().iterator()
+				.next().getContainedTypeDescr().getClzzName());
 	}
 
 }

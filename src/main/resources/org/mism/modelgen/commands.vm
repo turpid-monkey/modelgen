@@ -3,6 +3,10 @@ package $model.package;
 import org.mism.command.CommandFactory;
 import org.mism.command.Command;
 import org.mism.command.CommandTemplate;
+import org.mism.command.templates.ModifyCommandTemplate;
+import org.mism.command.templates.AddNewElementCommandTemplate;
+import org.mism.command.templates.RemoveElementCommandTemplate;
+import org.mism.command.templates.ClearElementsCommandTemplate;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
@@ -18,33 +22,68 @@ public class ModelCommandFactory implements CommandFactory
 #foreach ($type in $model.types)##
     // start Type $type.simpleName
 #foreach ($prop in $type.properties)
-    private class Change${prop.name}In${type.simpleName} implements CommandTemplate<$type.simpleName>
+#if ($prop.containedType)
+    public static class AddElementTo${type.simpleName}${prop.name} extends AddNewElementCommandTemplate<$type.clzzName, $prop.containedType>
     {
-        ${prop.type} oldValue, newValue;
-        $type.clzzName target;
-    
-        public boolean canUndo()
-        {
-           return true;
-        }
+        $prop.containedTypeDescr.clzzName newElement;
         
+        public void prepare($type.clzzName object)
+        {
+            this.object = object;
+            this.newElement = new ${prop.containedTypeDescr.clzzName}();
+        }
+
+        // proxy getters and setters
+#foreach ($subProp in $prop.containedTypeDescr.properties)
+        ${subProp.type} ${subProp.nameCc};
+        public void set${subProp.name}(${subProp.type} value)
+        {
+           this.newElement.set${subProp.name}(value);
+        }
+        public $subProp.type get${subProp.name}()
+        {
+           return this.newElement.get${subProp.name}();
+        }
+#end
+        // end proxy getters and setters
+    }
+    
+    public static class RemoveElementFrom${type.simpleName}${prop.name} extends RemoveElementCommandTemplate<$type.clzzName, $prop.containedType>
+    {
+        public void prepare($type.clzzName object)
+        {
+            this.object = object;
+            this.collectionRef = object.get${prop.name}Ref();
+        }
+    }
+    
+    public static class Clear${type.simpleName}${prop.name} extends ClearElementsCommandTemplate<${type.clzzName}, ${prop.containedType}>
+    {
+        public void prepare($type.clzzName object)
+        {
+            this.object = object;
+            this.collectionRef = object.get${prop.name}Ref();
+            this.collectionClone = object.get${prop.name}();
+        }
+    }
+#else
+    public static class Modify${type.simpleName}${prop.name} extends ModifyCommandTemplate<$type.clzzName, $prop.type>
+    {
         public void execute()
         {
-           target.set${prop.name}(newValue);
+           object.set${prop.name}(newValue);
         }
         public void rollback()
         {
-           target.set${prop.name}(oldValue);
+           object.set${prop.name}(oldValue);
         }
-        public void prepare($type.simpleName obj)
+        public void prepare($type.clzzName obj)
         {
-           target = ($type.clzzName) obj;
+           object = obj;
            oldValue = obj.get${prop.name}();
         }
-        public void setNewValue($prop.type _newValue) {
-           newValue = _newValue;
-        }
     }
+#end
 #end
     // end Type $type.simpleName
 #end

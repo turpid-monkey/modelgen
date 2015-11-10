@@ -18,6 +18,7 @@ public class Property {
 	boolean collection;
 	Type parent;
 	Type containerType;
+    Type containedTypeDescr;
 
 	public void init(Type parent, Method m) {
 		this.parent = parent;
@@ -31,7 +32,6 @@ public class Property {
 			Class<?> containedClzz = (Class<?>) (retType
 					.getActualTypeArguments()[0]);
 			containedType = containedClzz.getSimpleName();
-
 		}
 		type = m.getReturnType().getSimpleName();
 
@@ -46,6 +46,16 @@ public class Property {
 
 	public String getContainedType() {
 		return containedType;
+	}
+	
+	public String getContainedTypeFQN()
+	{
+		return parent.packageName + "." + containedType;
+	}
+	
+	public Type getContainedTypeDescr()
+	{
+		return parent.model.resolve(getContainedTypeFQN());
 	}
 
 	public Type getParent() {
