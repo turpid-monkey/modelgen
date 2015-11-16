@@ -10,11 +10,9 @@ jdk:
   - oraclejdk8
 
 install:
-    - TERM=dumb ./gradlew --refresh-dependencies --stacktrace
+    - TERM=dumb ./gradlew
 
 script:
-    - TERM=dumb ./gradlew build --stacktrace
-  
-after_failure:
-  - "cat ./build/test-results/*.xml"
+    - TERM=dumb ./gradlew build
+
 
