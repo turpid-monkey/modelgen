@@ -33,24 +33,24 @@ public class $type.clzzName implements $type.simpleName, Clonable<$type.simpleNa
 
 #foreach ( $prop in $type.properties )
 
-#parse("class_setter.vm")
+#parse("org/mism/modelgen/vmtemplates/class_setter.vm")
 
 
-#parse("class_getter.vm")
+#parse("org/mism/modelgen/vmtemplates/class_getter.vm")
 
 #end
 
-#parse("class_clone.vm")
+#parse("org/mism/modelgen/vmtemplates/class_clone.vm")
 
 
-#parse("class_equals.vm")
+#parse("org/mism/modelgen/vmtemplates/class_equals.vm")
 
 
 #if($type.contained)
-#parse("class_containedimpl.vm")
+#parse("org/mism/modelgen/vmtemplates/class_containedimpl.vm")
 
 #end
 
-#parse("class_mutable.vm")
+#parse("org/mism/modelgen/vmtemplates/class_mutable.vm")
 
 }

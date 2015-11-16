@@ -5,77 +5,89 @@ import java.util.Properties;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 public class ModelGenerator {
 
-	public void generate(ResourceSet set, Class<?>... classes) throws Exception {
-		Model model = new Model();
-		model.init(classes);
-		for (Type t : model.getTypes()) {
+    public static final String TEMPLATE_PATH = "org/mism/modelgen/vmtemplates/";
 
-			Resource res = set.open(t.getPackageName() + "." + t.getClzzName());
-			Writer out = res.open();
-			generateType(out, t);
-			res.close();
-		}
-	}
-	
-	private String getPath()
-	{
-		return ModelGenerator.class.getResource("./templates").getFile();
-	}
+    public void generate(ResourceSet set, Class<?>... classes) throws Exception {
+        Model model = new Model();
+        model.init(classes);
+        for (Type t : model.getTypes()) {
 
-	public void generateType(Writer out, Type t) throws Exception {
-		Properties props = new Properties();
-		props.setProperty("file.resource.loader.path",  getPath());
+            Resource res = set.open(t.getPackageName() + "." + t.getClzzName());
+            Writer out = res.open();
+            generateType(out, t);
+            res.close();
+        }
+    }
 
-		Velocity.init(props);
+    private String getPath() {
+        return ModelGenerator.class.getResource("templates").getFile();
+    }
 
-		VelocityContext context = new VelocityContext();
+    public void generateType(Writer out, Type t) throws Exception {
+        Properties props = new Properties();
+        props.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        props.setProperty("classpath.resource.loader.class",
+                ClasspathResourceLoader.class.getName());
 
-		context.put("type", t);
+        Velocity.init(props);
 
-		Velocity.mergeTemplate("class.vm", "UTF-8", context, out);
+        VelocityContext context = new VelocityContext();
 
-	}
-	
-	public void generateFactory(Writer out, Model model ) throws Exception {
-		Properties props = new Properties();
-		props.setProperty("file.resource.loader.path", getPath());
+        context.put("type", t);
 
-		Velocity.init(props);
+        Velocity.mergeTemplate(TEMPLATE_PATH + "class.vm", "UTF-8", context, out);
 
-		VelocityContext context = new VelocityContext();
+    }
 
-		context.put("model", model);
+    public void generateFactory(Writer out, Model model) throws Exception {
+        Properties props = new Properties();
+        props.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        props.setProperty("classpath.resource.loader.class",
+                ClasspathResourceLoader.class.getName());
 
-		Velocity.mergeTemplate("factory.vm", "UTF-8", context, out);
-	}
-	
-	public void generateVisitor(Writer out, Model model) throws Exception {
-		Properties props = new Properties();
-		props.setProperty("file.resource.loader.path", getPath());
+        Velocity.init(props);
 
-		Velocity.init(props);
+        VelocityContext context = new VelocityContext();
 
-		VelocityContext context = new VelocityContext();
+        context.put("model", model);
 
-		context.put("model", model);
+        Velocity.mergeTemplate(TEMPLATE_PATH + "factory.vm", "UTF-8", context, out);
+    }
 
-		Velocity.mergeTemplate("visitor.vm", "UTF-8", context, out);
-	}
-	
-	public void generateCommands(Writer out, Model model) throws Exception {
-		Properties props = new Properties();
-		props.setProperty("file.resource.loader.path", getPath());
-		Velocity.init(props);
+    public void generateVisitor(Writer out, Model model) throws Exception {
+        Properties props = new Properties();
+        props.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        props.setProperty("classpath.resource.loader.class",
+                ClasspathResourceLoader.class.getName());
 
-		VelocityContext context = new VelocityContext();
+        Velocity.init(props);
 
-		context.put("model", model);
+        VelocityContext context = new VelocityContext();
 
-		Velocity.mergeTemplate("commands.vm", "UTF-8", context, out);
-	
-	}
+        context.put("model", model);
+
+        Velocity.mergeTemplate(TEMPLATE_PATH + "visitor.vm", "UTF-8", context, out);
+    }
+
+    public void generateCommands(Writer out, Model model) throws Exception {
+        Properties props = new Properties();
+        props.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+        props.setProperty("classpath.resource.loader.class",
+                ClasspathResourceLoader.class.getName());
+        
+        Velocity.init(props);
+
+        VelocityContext context = new VelocityContext();
+
+        context.put("model", model);
+
+        Velocity.mergeTemplate(TEMPLATE_PATH + "commands.vm", "UTF-8", context, out);
+
+    }
 
 }
