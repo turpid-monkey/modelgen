@@ -3,6 +3,7 @@ apply plugin: 'eclipse'
 
 sourceCompatibility = 1.8
 version = '0.1'
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Modelgen', 'Implementation-Version': version
@@ -16,7 +17,6 @@ repositories {
 dependencies {
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     testCompile group: 'junit', name: 'junit', version: '4.+'
-    testCompile files('/Users/tr1nergy/Documents/workspace/InMemoryJavaCompiler/bin')
     compile group: 'org.apache.velocity', name: 'velocity', version: '1.6.+'
 }
 

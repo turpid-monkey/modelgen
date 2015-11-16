@@ -33,6 +33,10 @@ public class ModelCommandFactory implements CommandFactory
             this.object = object;
             this.newElement = new ${prop.containedTypeDescr.clzzName}();
         }
+        public String getPropertyName()
+        {
+           return "${prop.name}";
+        }
 
         // proxy getters and setters
 #foreach ($subProp in $prop.containedTypeDescr.properties)
@@ -59,6 +63,10 @@ public class ModelCommandFactory implements CommandFactory
             this.object = object;
             this.collectionRef = object.get${prop.name}Ref();
         }
+        public String getPropertyName()
+        {
+           return "${prop.name}";
+        }
     }
     static {
         addCommand(${type.simpleName}.class, RemoveElementFrom${type.simpleName}${prop.name}.class);
@@ -71,6 +79,10 @@ public class ModelCommandFactory implements CommandFactory
             this.object = object;
             this.collectionRef = object.get${prop.name}Ref();
             this.collectionClone = object.get${prop.name}();
+        }
+        public String getPropertyName()
+        {
+           return "${prop.name}";
         }
     }
     static {
@@ -91,6 +103,10 @@ public class ModelCommandFactory implements CommandFactory
         {
            object = obj;
            oldValue = obj.get${prop.name}();
+        }
+        public String getPropertyName()
+        {
+           return "${prop.name}";
         }
     }
     static {

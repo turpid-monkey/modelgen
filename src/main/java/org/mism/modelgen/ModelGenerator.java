@@ -19,11 +19,15 @@ public class ModelGenerator {
 			res.close();
 		}
 	}
+	
+	private String getPath()
+	{
+		return ModelGenerator.class.getResource("./templates").getFile();
+	}
 
 	public void generateType(Writer out, Type t) throws Exception {
 		Properties props = new Properties();
-		props.setProperty("file.resource.loader.path", ModelGenerator.class
-				.getResource(".").getFile());
+		props.setProperty("file.resource.loader.path",  getPath());
 
 		Velocity.init(props);
 
@@ -37,8 +41,7 @@ public class ModelGenerator {
 	
 	public void generateFactory(Writer out, Model model ) throws Exception {
 		Properties props = new Properties();
-		props.setProperty("file.resource.loader.path", ModelGenerator.class
-				.getResource(".").getFile());
+		props.setProperty("file.resource.loader.path", getPath());
 
 		Velocity.init(props);
 
@@ -51,8 +54,7 @@ public class ModelGenerator {
 	
 	public void generateVisitor(Writer out, Model model) throws Exception {
 		Properties props = new Properties();
-		props.setProperty("file.resource.loader.path", ModelGenerator.class
-				.getResource(".").getFile());
+		props.setProperty("file.resource.loader.path", getPath());
 
 		Velocity.init(props);
 
@@ -65,8 +67,7 @@ public class ModelGenerator {
 	
 	public void generateCommands(Writer out, Model model) throws Exception {
 		Properties props = new Properties();
-		props.setProperty("file.resource.loader.path", ModelGenerator.class
-				.getResource(".").getFile());
+		props.setProperty("file.resource.loader.path", getPath());
 		Velocity.init(props);
 
 		VelocityContext context = new VelocityContext();

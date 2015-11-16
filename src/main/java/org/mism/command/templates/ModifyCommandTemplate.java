@@ -24,4 +24,8 @@ public abstract class ModifyCommandTemplate<TargetType, ValueType> implements
 	public ValueType getOldValue() {
 		return oldValue;
 	}
+
+	public TargetType getObject() {
+		return object;
+	}
 }

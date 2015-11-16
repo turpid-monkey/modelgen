@@ -17,7 +17,7 @@ public class CloneTemplateTest {
 	public void testCloneCode() throws Exception {
 		Properties props = new Properties();
 		props.setProperty("file.resource.loader.path", ModelGenerator.class
-				.getResource(".").getFile());
+				.getResource("./templates").getFile());
 		Velocity.init(props);
 		VelocityContext context = new VelocityContext();
 

@@ -4,14 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 import org.mdkt.compiler.InMemoryJavaCompiler;
+import org.mism.command.Command;
+import org.mism.command.CommandFactory;
+import org.mism.command.templates.ModifyCommandTemplate;
 import org.mism.modelgen.api.Clonable;
 import org.mism.modelgen.ifaces.AbstractInterface;
 import org.mism.modelgen.ifaces.Branch;
@@ -321,9 +326,24 @@ public class ModelGeneratorTest extends ModelGenerator {
 		System.out.println(out);
 
 		comp.addSource("org.mism.modelgen.ifaces.ModelCommandFactory", out.toString());
-		Class<?> clzz = comp.compileAll().get(
+		Map<String, Class<?>> compiled = comp.compileAll();
+		Class<?> clzz = compiled.get(
 				"org.mism.modelgen.ifaces.ModelCommandFactory");
 		assertNotNull(clzz);
+		
+		CommandFactory modelCommandFactory = (CommandFactory) clzz.newInstance();
+		
+		ChildInterface child = (ChildInterface) compiled.get("org.mism.modelgen.ifaces.ChildInterfaceObject").newInstance();
+		List<Command<ChildInterface>> cmds = modelCommandFactory.prepareCommands(ChildInterface.class, child);
+		
+		assertEquals(1, cmds.size());
+		ModifyCommandTemplate<ChildInterface, String> command = (ModifyCommandTemplate) cmds.get(0);
+		command.setNewValue("Test");
+		command.execute();
+		assertEquals("Test", child.getName());
+		command.rollback();
+		assertNull(child.getName());
+		
 		
 	}
 
