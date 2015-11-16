@@ -4,6 +4,10 @@ apply plugin: 'eclipse'
 sourceCompatibility = 1.8
 version = '0.1'
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.7'
+}
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Modelgen', 'Implementation-Version': version
