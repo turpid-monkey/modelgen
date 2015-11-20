@@ -1,0 +1,18 @@
+sudo: false
+
+addons:
+  apt:
+    packages:
+    - oracle-java8-installer
+
+language: java
+jdk:
+  - oraclejdk8
+
+install:
+    - TERM=dumb ./gradlew
+
+script:
+    - TERM=dumb ./gradlew build
+
+
