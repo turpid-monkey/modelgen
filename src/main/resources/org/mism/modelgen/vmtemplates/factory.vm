@@ -4,15 +4,10 @@ package $model.package;
 import ${type.javaFQN};
 #end
 
-public class ModelFactory {
+public enum ModelFactory {
 
-   private static ModelFactory instance;
+   INSTANCE;
    
-   public static ModelFactory instance()
-   {
-      if (instance==null) return instance = new ModelFactory(); else return instance;
-   }
-
    private ModelFactory() { };
    
 #foreach ($type in $model.types)

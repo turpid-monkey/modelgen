@@ -26,6 +26,7 @@ import org.mism.modelgen.ifaces.ExtendingInterface;
 import org.mism.modelgen.ifaces.MethodNode;
 import org.mism.modelgen.ifaces.OtherTestInterface;
 import org.mism.modelgen.ifaces.ParentInterface;
+import org.mism.modelgen.ifaces.SomeTypeWithListProperty;
 import org.mism.modelgen.ifaces.TestInterface;
 import org.mism.modelgen.ifaces.TestInterface2;
 import org.mism.modelgen.ifaces.TreeSegment;
@@ -33,7 +34,16 @@ import org.mism.modelgen.ifaces.TreeSegment;
 public class ModelGeneratorTest extends ModelGenerator {
 
 	@Test
-	public void testSingeContainment() throws Exception
+	public void testListProperty() throws Exception
+	{
+		SomeTypeWithListProperty type = classify(SomeTypeWithListProperty.class);
+		
+		assertNotNull(type);
+		
+	}
+	
+	@Test
+	public void testSingleContainment() throws Exception
 	{
 		ClassNode node = classify(ClassNode.class, MethodNode.class);
 		
@@ -264,7 +274,7 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Class<?> clzz = comp.compileAll().get(
 				"org.mism.modelgen.ifaces.ModelFactory");
 
-		Object o = clzz.getDeclaredMethod("instance").invoke(null);
+		Object o = clzz.getEnumConstants()[0];
 		TestInterface test = (TestInterface) clzz.getMethod(
 				"createTestInterface", String.class).invoke(o, "TEST");
 
@@ -297,7 +307,7 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Class<?> clzz = comp.compileAll().get(
 				"org.mism.modelgen.ifaces.ModelFactory");
 
-		Object factory = clzz.getMethod("instance").invoke(null);
+		Object factory = clzz.getEnumConstants()[0];
 		ParentInterface p = (ParentInterface) clzz.getMethod(
 				"createParentInterface").invoke(factory);
 
