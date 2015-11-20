@@ -61,9 +61,13 @@ public class Type {
 		return packageName;
 	}
 	
+	public String getClzzPackageName() {
+		return packageName + ".impl";
+	}
+	
 	public String getJavaFQN()
 	{
-		return packageName + "." + clzzName;
+		return getClzzPackageName() + "." + clzzName;
 	}
 
 	public boolean isAbstract() {

@@ -1,5 +1,6 @@
-package $type.packageName;
+package ${type.clzzPackageName};
 
+import ${type.packageName}.*;
 import org.mism.modelgen.api.*;
 import java.beans.PropertyChangeSupport;
 import ${type.typeName};

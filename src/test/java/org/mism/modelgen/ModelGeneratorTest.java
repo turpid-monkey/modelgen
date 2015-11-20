@@ -58,15 +58,13 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Type t = model.resolve(TreeSegment.class);
 		StringWriter tout = new StringWriter();
 		generator.generateType(tout, t);
-		comp.addSource("org.mism.modelgen.ifaces.TreeSegmentObject",
-				tout.toString());
+		comp.addSource(t.getJavaFQN(), tout.toString());
 
 		Type ot = model.resolve(Branch.class);
 
 		StringWriter otout = new StringWriter();
 		generator.generateType(otout, ot);
-		comp.addSource("org.mism.modelgen.ifaces.BranchObject",
-				otout.toString());
+		comp.addSource(ot.getJavaFQN(), otout.toString());
 
 		StringWriter out = new StringWriter();
 		generator.generateVisitor(out, model);
@@ -92,8 +90,8 @@ public class ModelGeneratorTest extends ModelGenerator {
 
 		System.out.println(out);
 
-		Class<?> clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.ifaces.TestInterfaceObject", out.toString());
+		Class<?> clazz = InMemoryJavaCompiler.compile(t.getJavaFQN(),
+				out.toString());
 		TestInterface test = (TestInterface) clazz.newInstance();
 
 		assertEquals(1, t.getRequired().length);
@@ -113,15 +111,15 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Type t = model.resolve(TestInterface.class);
 		generator.generateType(out, t);
 
-		Class<?> clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.ifaces.TestInterfaceObject", out.toString());
+		Class<?> clazz = InMemoryJavaCompiler.compile(t.getJavaFQN(),
+				out.toString());
 		TestInterface test = (TestInterface) clazz.newInstance();
 
 		out = new StringWriter();
 		generator.generateType(out, model.resolve(OtherTestInterface.class));
 		System.out.println(out);
 		Class<?> otherClazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.ifaces.OtherTestInterfaceObject",
+				model.resolve(OtherTestInterface.class).getJavaFQN(),
 				out.toString());
 
 		OtherTestInterface other = (OtherTestInterface) otherClazz
@@ -150,15 +148,15 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Type t = model.resolve(TestInterface.class);
 		generator.generateType(out, t);
 
-		Class<?> clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.ifaces.TestInterfaceObject", out.toString());
+		Class<?> clazz = InMemoryJavaCompiler.compile(t.getJavaFQN(),
+				out.toString());
 		TestInterface test = (TestInterface) clazz.newInstance();
 
 		out = new StringWriter();
 		generator.generateType(out, model.resolve(OtherTestInterface.class));
 		System.out.println(out);
 		Class<?> otherClazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.ifaces.OtherTestInterfaceObject",
+				model.resolve(OtherTestInterface.class).getJavaFQN(),
 				out.toString());
 
 		OtherTestInterface other = (OtherTestInterface) otherClazz
@@ -188,8 +186,8 @@ public class ModelGeneratorTest extends ModelGenerator {
 
 		System.out.println(out);
 
-		Class<?> clazz = InMemoryJavaCompiler.compile(
-				"org.mism.modelgen.ifaces.TestInterfaceObject", out.toString());
+		Class<?> clazz = InMemoryJavaCompiler.compile(t.getJavaFQN(),
+				out.toString());
 		TestInterface test1 = (TestInterface) clazz.newInstance();
 		TestInterface test2 = (TestInterface) clazz.newInstance();
 		test1.getClass().getMethod("setName", String.class)
@@ -242,14 +240,12 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Type t = model.resolve(TestInterface.class);
 		StringWriter tout = new StringWriter();
 		generator.generateType(tout, t);
-		comp.addSource("org.mism.modelgen.ifaces.TestInterfaceObject",
-				tout.toString());
+		comp.addSource(t.getJavaFQN(), tout.toString());
 
 		Type ot = model.resolve(OtherTestInterface.class);
 		StringWriter otout = new StringWriter();
 		generator.generateType(otout, ot);
-		comp.addSource("org.mism.modelgen.ifaces.OtherTestInterfaceObject",
-				otout.toString());
+		comp.addSource(ot.getJavaFQN(), otout.toString());
 
 		generator.generateFactory(out, model);
 		System.out.println(out);
@@ -277,14 +273,12 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Type t = model.resolve(ParentInterface.class);
 		StringWriter tout = new StringWriter();
 		generator.generateType(tout, t);
-		comp.addSource("org.mism.modelgen.ifaces.ParentInterfaceObject",
-				tout.toString());
+		comp.addSource(t.getJavaFQN(), tout.toString());
 
 		Type ot = model.resolve(ChildInterface.class);
 		StringWriter otout = new StringWriter();
 		generator.generateType(otout, ot);
-		comp.addSource("org.mism.modelgen.ifaces.ChildInterfaceObject",
-				otout.toString());
+		comp.addSource(ot.getJavaFQN(), otout.toString());
 
 		generator.generateFactory(out, model);
 		System.out.println(out);
@@ -300,11 +294,11 @@ public class ModelGeneratorTest extends ModelGenerator {
 		assertNotNull(p);
 
 	}
-	
+
 	@Test
 	public void testGenerateCommands() throws Exception {
 		ModelGenerator generator = new ModelGenerator();
-		
+
 		Model model = new Model();
 		model.init(ParentInterface.class, ChildInterface.class);
 		InMemoryJavaCompiler comp = new InMemoryJavaCompiler();
@@ -312,39 +306,41 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Type t = model.resolve(ParentInterface.class);
 		StringWriter tout = new StringWriter();
 		generator.generateType(tout, t);
-		comp.addSource("org.mism.modelgen.ifaces.ParentInterfaceObject",
-				tout.toString());
+		comp.addSource(t.getJavaFQN(), tout.toString());
 
 		Type ot = model.resolve(ChildInterface.class);
 		StringWriter otout = new StringWriter();
 		generator.generateType(otout, ot);
-		comp.addSource("org.mism.modelgen.ifaces.ChildInterfaceObject",
-				otout.toString());
+		comp.addSource(ot.getJavaFQN(), otout.toString());
 
 		StringWriter out = new StringWriter();
 		generator.generateCommands(out, model);
 		System.out.println(out);
 
-		comp.addSource("org.mism.modelgen.ifaces.ModelCommandFactory", out.toString());
+		comp.addSource("org.mism.modelgen.ifaces.ModelCommandFactory",
+				out.toString());
 		Map<String, Class<?>> compiled = comp.compileAll();
-		Class<?> clzz = compiled.get(
-				"org.mism.modelgen.ifaces.ModelCommandFactory");
+		Class<?> clzz = compiled
+				.get("org.mism.modelgen.ifaces.ModelCommandFactory");
 		assertNotNull(clzz);
-		
-		CommandFactory modelCommandFactory = (CommandFactory) clzz.newInstance();
-		
-		ChildInterface child = (ChildInterface) compiled.get("org.mism.modelgen.ifaces.ChildInterfaceObject").newInstance();
-		List<Command<ChildInterface>> cmds = modelCommandFactory.prepareCommands(ChildInterface.class, child);
-		
+
+		CommandFactory modelCommandFactory = (CommandFactory) clzz
+				.newInstance();
+
+		ChildInterface child = (ChildInterface) compiled.get(ot.getJavaFQN())
+				.newInstance();
+		List<Command<ChildInterface>> cmds = modelCommandFactory
+				.prepareCommands(ChildInterface.class, child);
+
 		assertEquals(1, cmds.size());
-		ModifyCommandTemplate<ChildInterface, String> command = (ModifyCommandTemplate) cmds.get(0);
+		ModifyCommandTemplate<ChildInterface, String> command = (ModifyCommandTemplate) cmds
+				.get(0);
 		command.setNewValue("Test");
 		command.execute();
 		assertEquals("Test", child.getName());
 		command.rollback();
 		assertNull(child.getName());
-		
-		
+
 	}
 
 	@Test
