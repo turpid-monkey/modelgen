@@ -18,20 +18,23 @@ public class Property {
 	boolean collection;
 	Type parent;
 	Type containerType;
-    Type containedTypeDescr;
+	Type containedTypeDescr;
+	boolean contained;
 
 	public void init(Type parent, Method m) {
 		this.parent = parent;
 		name = Type.propertyName(m);
 		nameCc = Type.propertyNameCC(m);
-		collection = (m.getDeclaredAnnotation(Containment.class) != null)
-				|| Collection.class.equals(m.getReturnType());
-		if (collection) {
+		contained = m.getDeclaredAnnotation(Containment.class) != null;
+		collection = Collection.class.equals(m.getReturnType());
+		if (collection && contained) {
 			ParameterizedType retType = (ParameterizedType) m
 					.getGenericReturnType();
 			Class<?> containedClzz = (Class<?>) (retType
 					.getActualTypeArguments()[0]);
 			containedType = containedClzz.getSimpleName();
+		} else if (contained) {
+			containedType = m.getReturnType().getSimpleName();
 		}
 		type = m.getReturnType().getSimpleName();
 
@@ -47,14 +50,12 @@ public class Property {
 	public String getContainedType() {
 		return containedType;
 	}
-	
-	public String getContainedTypeFQN()
-	{
+
+	public String getContainedTypeFQN() {
 		return parent.packageName + "." + containedType;
 	}
-	
-	public Type getContainedTypeDescr()
-	{
+
+	public Type getContainedTypeDescr() {
 		return parent.model.resolve(getContainedTypeFQN());
 	}
 
@@ -125,5 +126,9 @@ public class Property {
 
 	public boolean hasContainer() {
 		return this.containerType != null;
+	}
+
+	public boolean isContained() {
+		return contained;
 	}
 }

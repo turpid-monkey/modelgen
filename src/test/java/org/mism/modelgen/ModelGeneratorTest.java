@@ -21,7 +21,9 @@ import org.mism.modelgen.api.Clonable;
 import org.mism.modelgen.ifaces.AbstractInterface;
 import org.mism.modelgen.ifaces.Branch;
 import org.mism.modelgen.ifaces.ChildInterface;
+import org.mism.modelgen.ifaces.ClassNode;
 import org.mism.modelgen.ifaces.ExtendingInterface;
+import org.mism.modelgen.ifaces.MethodNode;
 import org.mism.modelgen.ifaces.OtherTestInterface;
 import org.mism.modelgen.ifaces.ParentInterface;
 import org.mism.modelgen.ifaces.TestInterface;
@@ -30,6 +32,14 @@ import org.mism.modelgen.ifaces.TreeSegment;
 
 public class ModelGeneratorTest extends ModelGenerator {
 
+	@Test
+	public void testSingeContainment() throws Exception
+	{
+		ClassNode node = classify(ClassNode.class, MethodNode.class);
+		
+		assertNotNull(node);
+	}
+	
 	@Test
 	public void testGenerateExtendingInterface() throws Exception {
 		ExtendingInterface ext = classify(ExtendingInterface.class,

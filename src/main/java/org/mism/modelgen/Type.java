@@ -111,12 +111,26 @@ public class Type {
 	private void initContainments(Class<?> clzz,
 			Collection<Property> properties) {
 		for (Method m : clzz.getDeclaredMethods()) {
-			if (m.getDeclaredAnnotation(Containment.class) != null) {
+			boolean containment = m.getDeclaredAnnotation(Containment.class)!=null;
+			boolean collection = Collection.class.equals(m.getReturnType());
+			if (containment && collection) {
 				Class<?> contained = (Class<?>) ((ParameterizedType) m
 						.getGenericReturnType()).getActualTypeArguments()[0];
 
 				List<Property> containers = properties.stream()
 						.filter(e -> e.isCollection())
+						.collect(Collectors.toList());
+				if (containers.size() != 1)
+					throw new IllegalArgumentException(
+							"Error in @Containment declaration for "
+									+ clzz.getName());
+				model.addContainment(containers.get(0).getName(), clzz, contained);
+				containers.get(0).setContainerType(this);
+			} else if (containment)
+			{
+			   Class<?> contained = m.getReturnType();
+			   List<Property> containers = properties.stream()
+						.filter(e -> e.contained)
 						.collect(Collectors.toList());
 				if (containers.size() != 1)
 					throw new IllegalArgumentException(

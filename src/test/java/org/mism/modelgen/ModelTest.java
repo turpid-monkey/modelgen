@@ -5,11 +5,25 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.mism.modelgen.ifaces.AbstractInterface;
 import org.mism.modelgen.ifaces.ChildInterface;
+import org.mism.modelgen.ifaces.ClassNode;
 import org.mism.modelgen.ifaces.ExtendingInterface;
+import org.mism.modelgen.ifaces.MethodNode;
 import org.mism.modelgen.ifaces.ParentInterface;
 import org.mism.modelgen.ifaces.TestInterface;
 
 public class ModelTest {
+	
+	@Test
+	public void testSimpleContainment() throws Exception
+	{
+		Model model = new Model();
+        model.init(MethodNode.class, ClassNode.class);
+        Type methodNode = model.resolve(MethodNode.class);
+        assertTrue(methodNode.isContained());
+        Type classNode = model.resolve(ClassNode.class);
+        assertTrue(classNode.getProperties().iterator().next().hasContainer());
+	}
+
 
 	@Test
 	public void testModelAll() {

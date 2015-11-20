@@ -12,7 +12,12 @@ public class $type.clzzName implements $type.simpleName, Clonable<$type.simpleNa
 
 #foreach( $prop in $type.properties )
 #if($prop.containedType)
+#if($prop.collection)
     ContainedList<$type.simpleName,${prop.containedType}> $prop.nameCc = new ContainedList<$type.simpleName,${prop.containedType}>("${prop.name}", this);
+#else
+    // contained property
+    $prop.declaration $prop.nameCc;
+#end
 #else
     $prop.declaration $prop.nameCc;
 #end
