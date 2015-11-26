@@ -34,22 +34,39 @@ import org.mism.modelgen.ifaces.TreeSegment;
 public class ModelGeneratorTest extends ModelGenerator {
 
 	@Test
-	public void testListProperty() throws Exception
-	{
+	public void testListProperty() throws Exception {
 		SomeTypeWithListProperty type = classify(SomeTypeWithListProperty.class);
-		
+
 		assertNotNull(type);
-		
+
+	}
+
+	@Test
+	public void testSingleContainment() throws Exception {
+		ClassNode node = classify(ClassNode.class, MethodNode.class);
+
+		assertNotNull(node);
+	}
+
+	@Test
+	public void testToStringSimple() throws Exception {
+
+		ExtendingInterface test = classify(ExtendingInterface.class,
+				AbstractInterface.class, TestInterface.class);
+		assertEquals(
+				"{ \"@Type\":\"ExtendingInterface\", \"Hadoodle\": \"null\", \"SomeAbstractStuff\": \"null\", \"Name\": \"null\", \"ID\": \"null\", \"Other\": \"null\"}",
+				test.toString());
 	}
 	
 	@Test
-	public void testSingleContainment() throws Exception
-	{
-		ClassNode node = classify(ClassNode.class, MethodNode.class);
-		
-		assertNotNull(node);
+	public void testToStringList() throws Exception {
+
+		ParentInterface test = classify(ParentInterface.class, ChildInterface.class);
+		assertEquals(
+				"{ \"@Type\":\"ParentInterface\", \"Children\":[]}",
+				test.toString());
 	}
-	
+
 	@Test
 	public void testGenerateExtendingInterface() throws Exception {
 		ExtendingInterface ext = classify(ExtendingInterface.class,

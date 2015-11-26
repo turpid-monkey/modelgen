@@ -9,5 +9,4 @@ public class ObjectUtil {
 	public static HashCode newHash() {
 		return new HashCode(37, 73);
 	}
-
 }

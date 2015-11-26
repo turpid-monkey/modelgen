@@ -23,6 +23,22 @@ public class ContainedList<P, T extends Contained<P>> implements List<T> {
 		this.delegate = delegate;
 		this.container = container;
 	}
+	
+	public String asJSONString()
+	{
+		StringBuffer buf = new StringBuffer();
+		buf.append('"');
+		buf.append(name);
+		buf.append("\":[");
+		Iterator<T> iter = delegate.iterator();
+		while(iter.hasNext())
+		{
+			buf.append(iter.next().toString());
+			if (iter.hasNext()) buf.append(", ");
+		}
+		buf.append("]");
+		return buf.toString();
+	}
 
 	public List<T> getContent() {
 		return Collections.unmodifiableList(delegate);

@@ -59,4 +59,6 @@ public class $type.clzzName implements $type.simpleName, Clonable<$type.simpleNa
 
 #parse("org/mism/modelgen/vmtemplates/class_mutable.vm")
 
+#parse("org/mism/modelgen/vmtemplates/class_tostring.vm")
+
 }

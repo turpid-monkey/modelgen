@@ -63,6 +63,11 @@ public class ContainedListTest {
 		public String getName() {
 			return "test";
 		}
+		
+		public String toString()
+		{
+			return getName();
+		}
 
 	}
 
@@ -256,6 +261,16 @@ public class ContainedListTest {
 		assertTrue(parent.children().replaceContent(
 				Arrays.asList(child2, child3)));
 		assertTrue(parent.children().equals(Arrays.asList(child2, child3)));
+	}
+	
+	@Test
+	public void testAsJSON()
+	{
+		Parent parent = new Parent();
+		Child child1 = new Child(), child2 = new Child();
+		parent.children().add(child1);
+		parent.children().add(child2);
+		assertEquals("\"children\":[test, test]", parent.children().asJSONString());
 	}
 
 	@Test
