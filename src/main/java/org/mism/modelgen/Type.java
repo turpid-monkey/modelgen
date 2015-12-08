@@ -17,7 +17,7 @@ import org.mism.modelgen.api.Containment;
 public class Type {
 
 	Class<?> clzz;
- 	Model model;
+	Model model;
 	Collection<String> imports;
 	Collection<Property> properties;
 	private Property[] required;
@@ -60,13 +60,12 @@ public class Type {
 	public String getPackageName() {
 		return packageName;
 	}
-	
+
 	public String getClzzPackageName() {
 		return packageName + ".impl";
 	}
-	
-	public String getJavaFQN()
-	{
+
+	public String getJavaFQN() {
 		return getClzzPackageName() + "." + clzzName;
 	}
 
@@ -97,9 +96,12 @@ public class Type {
 				continue;
 			Type parent = model.resolve(ifs);
 			if (parent == null)
-				throw new IllegalArgumentException("Interface "
-						+ clzz.getName() + " extends " + ifs.getName()
-						+ ", but this type is not part of the declared model types.");
+				throw new IllegalArgumentException(
+						"Interface "
+								+ clzz.getName()
+								+ " extends "
+								+ ifs.getName()
+								+ ", but this type is not part of the declared model types.");
 			properties.addAll(parent.getProperties());
 			imports.addAll(parent.getImports());
 			ext3nds.add(parent);
@@ -108,36 +110,36 @@ public class Type {
 		initContainments(clzz, properties);
 	}
 
-	private void initContainments(Class<?> clzz,
-			Collection<Property> properties) {
+	private void initContainments(Class<?> clzz, Collection<Property> properties) {
 		for (Method m : clzz.getDeclaredMethods()) {
-			boolean containment = m.getDeclaredAnnotation(Containment.class)!=null;
+			boolean containment = m.getDeclaredAnnotation(Containment.class) != null;
 			boolean collection = Collection.class.equals(m.getReturnType());
 			if (containment && collection) {
+				Property p = properties.stream()
+						.filter(e -> m.getName().equals("get" + e.getName()))
+						.findFirst().get();
+				if (p == null)
+					throw new IllegalArgumentException(
+							"Error in @Contaiment definition for "
+									+ m.getName() + " in interface "
+									+ clzz.getName());
 				Class<?> contained = (Class<?>) ((ParameterizedType) m
 						.getGenericReturnType()).getActualTypeArguments()[0];
 
-				List<Property> containers = properties.stream()
-						.filter(e -> e.isCollection())
-						.collect(Collectors.toList());
-				if (containers.size() != 1)
+				model.addContainment(p.getName(), clzz, contained);
+				p.setContainerType(this);
+			} else if (containment) {
+				Class<?> contained = m.getReturnType();
+				Property p = properties.stream()
+						.filter(e -> m.getName().equals("get" + e.getName()))
+						.findFirst().get();
+				if (p == null)
 					throw new IllegalArgumentException(
-							"Error in @Containment declaration for "
+							"Error in @Contaiment definition for "
+									+ m.getName() + " in interface "
 									+ clzz.getName());
-				model.addContainment(containers.get(0).getName(), clzz, contained);
-				containers.get(0).setContainerType(this);
-			} else if (containment)
-			{
-			   Class<?> contained = m.getReturnType();
-			   List<Property> containers = properties.stream()
-						.filter(e -> e.contained)
-						.collect(Collectors.toList());
-				if (containers.size() != 1)
-					throw new IllegalArgumentException(
-							"Error in @Containment declaration for "
-									+ clzz.getName());
-				model.addContainment(containers.get(0).getName(), clzz, contained);
-				containers.get(0).setContainerType(this);
+				model.addContainment(p.getName(), clzz, contained);
+				p.setContainerType(this);
 			}
 		}
 
@@ -196,9 +198,8 @@ public class Type {
 	public String getSimpleName() {
 		return simpleName;
 	}
-	
-	public Type getContainer()
-	{
+
+	public Type getContainer() {
 		return model.getContainment(this.clzz);
 	}
 

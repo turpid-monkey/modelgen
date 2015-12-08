@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.io.StringWriter;
 import java.math.BigInteger;
@@ -22,6 +23,7 @@ import org.mism.modelgen.ifaces.AbstractInterface;
 import org.mism.modelgen.ifaces.Branch;
 import org.mism.modelgen.ifaces.ChildInterface;
 import org.mism.modelgen.ifaces.ClassNode;
+import org.mism.modelgen.ifaces.DoubleContainmentPerson;
 import org.mism.modelgen.ifaces.ExtendingInterface;
 import org.mism.modelgen.ifaces.MethodNode;
 import org.mism.modelgen.ifaces.OtherTestInterface;
@@ -57,13 +59,13 @@ public class ModelGeneratorTest extends ModelGenerator {
 				"{ \"@Type\":\"ExtendingInterface\", \"Hadoodle\": \"null\", \"SomeAbstractStuff\": \"null\", \"Name\": \"null\", \"ID\": \"null\", \"Other\": \"null\"}",
 				test.toString());
 	}
-	
+
 	@Test
 	public void testToStringList() throws Exception {
 
-		ParentInterface test = classify(ParentInterface.class, ChildInterface.class);
-		assertEquals(
-				"{ \"@Type\":\"ParentInterface\", \"Children\":[]}",
+		ParentInterface test = classify(ParentInterface.class,
+				ChildInterface.class);
+		assertEquals("{ \"@Type\":\"ParentInterface\", \"Children\":[]}",
 				test.toString());
 	}
 
@@ -423,4 +425,12 @@ public class ModelGeneratorTest extends ModelGenerator {
 		return clzz.cast(clazz.newInstance());
 	}
 
+	@Test
+	public void testDoubleContainments() throws Exception {
+		DoubleContainmentPerson p = classify(DoubleContainmentPerson.class);
+
+		assertNotNull(p);
+		
+		fail("Tests for proper handling of multiple containments missing!");
+	}
 }
