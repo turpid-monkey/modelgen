@@ -23,11 +23,15 @@ import org.mism.modelgen.ifaces.ParentInterface;
 public class ContainedListTest {
 
 	class Parent implements ParentInterface, Mutable {
-		ContainedList<ParentInterface, ChildInterface> children = new ContainedList<ParentInterface, ChildInterface>(
-				"children", this);
+		ContainedList<ParentInterface, ChildInterface> children;
+		PropertyChangeSupport pcs;
 
-		PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-		
+		public Parent() {
+			pcs = new PropertyChangeSupport(this);
+			children = new ContainedList<ParentInterface, ChildInterface>(
+					"children", this);
+		}
+
 		@Override
 		public Collection<ChildInterface> getChildren() {
 			return children;
@@ -41,7 +45,6 @@ public class ContainedListTest {
 		public PropertyChangeSupport getChangeSupport() {
 			return pcs;
 		}
-
 
 	}
 
@@ -63,9 +66,8 @@ public class ContainedListTest {
 		public String getName() {
 			return "test";
 		}
-		
-		public String toString()
-		{
+
+		public String toString() {
 			return getName();
 		}
 
@@ -76,7 +78,7 @@ public class ContainedListTest {
 
 		Parent parent = new Parent();
 		Child child = new Child();
-		parent.children().getPropertyChangeSupport()
+		parent.children().getChangeSupport()
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
@@ -103,7 +105,7 @@ public class ContainedListTest {
 		Parent parent = new Parent();
 		Child child = new Child();
 		parent.children().add(child);
-		parent.children().getPropertyChangeSupport()
+		parent.children().getChangeSupport()
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
@@ -131,7 +133,7 @@ public class ContainedListTest {
 		Parent parent = new Parent();
 		Child child = new Child();
 		parent.children().add(child);
-		parent.children().getPropertyChangeSupport()
+		parent.children().getChangeSupport()
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
@@ -159,7 +161,7 @@ public class ContainedListTest {
 		Parent parent = new Parent();
 		Child child = new Child();
 		parent.children().add(child);
-		parent.children().getPropertyChangeSupport()
+		parent.children().getChangeSupport()
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
@@ -191,7 +193,7 @@ public class ContainedListTest {
 		removes.add(child);
 		removes.add("decoy");
 
-		parent.children().getPropertyChangeSupport()
+		parent.children().getChangeSupport()
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
@@ -223,7 +225,7 @@ public class ContainedListTest {
 		retainables.add(child);
 		retainables.add("decoy");
 
-		parent.children().getPropertyChangeSupport()
+		parent.children().getChangeSupport()
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
@@ -262,15 +264,15 @@ public class ContainedListTest {
 				Arrays.asList(child2, child3)));
 		assertTrue(parent.children().equals(Arrays.asList(child2, child3)));
 	}
-	
+
 	@Test
-	public void testAsJSON()
-	{
+	public void testAsJSON() {
 		Parent parent = new Parent();
 		Child child1 = new Child(), child2 = new Child();
 		parent.children().add(child1);
 		parent.children().add(child2);
-		assertEquals("\"children\":[test, test]", parent.children().asJSONString());
+		assertEquals("\"children\":[test, test]", parent.children()
+				.asJSONString());
 	}
 
 	@Test
@@ -280,7 +282,7 @@ public class ContainedListTest {
 		parent.children().add(child1);
 		parent.children().add(child2);
 
-		parent.children().getPropertyChangeSupport()
+		parent.children().getChangeSupport()
 				.addPropertyChangeListener(new PropertyChangeListener() {
 
 					@Override
