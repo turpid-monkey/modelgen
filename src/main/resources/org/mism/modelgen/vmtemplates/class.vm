@@ -19,7 +19,11 @@ public class $type.clzzName implements $type.simpleName, Clonable<$type.simpleNa
     $prop.declaration $prop.nameCc;
 #end
 #else
+#if($prop.collection)
+    ObservableList<${prop.collectionType}> $prop.nameCc = new ObservableList<${prop.collectionType}>("${prop.name}", getChangeSupport());
+#else
     $prop.declaration $prop.nameCc;
+#end
 #end
 #end
 

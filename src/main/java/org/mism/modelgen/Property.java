@@ -13,6 +13,7 @@ public class Property {
 	boolean required;
 	String type;
 	String containedType;
+	String collectionType;
 	String pkg;
 	boolean modelType;
 	boolean collection;
@@ -26,13 +27,20 @@ public class Property {
 		name = Type.propertyName(m);
 		nameCc = Type.propertyNameCC(m);
 		contained = m.getDeclaredAnnotation(Containment.class) != null;
-		collection = Collection.class.equals(m.getReturnType());
+		collection = Collection.class.isAssignableFrom(m.getReturnType());
 		if (collection && contained) {
 			ParameterizedType retType = (ParameterizedType) m
 					.getGenericReturnType();
 			Class<?> containedClzz = (Class<?>) (retType
 					.getActualTypeArguments()[0]);
 			containedType = containedClzz.getSimpleName();
+		} else if (collection)
+		{
+			ParameterizedType retType = (ParameterizedType) m
+					.getGenericReturnType();
+			Class<?> containedClzz = (Class<?>) (retType
+					.getActualTypeArguments()[0]);
+			collectionType = containedClzz.getSimpleName();
 		} else if (contained) {
 			containedType = m.getReturnType().getSimpleName();
 		}
@@ -81,7 +89,7 @@ public class Property {
 	 * @return type declaration, assuming the type has been imported
 	 */
 	public String getDeclaration() {
-		return type + (collection ? "<" + containedType + ">" : "");
+		return type + (collection ? "<" + (contained?containedType:collectionType) + ">" : "");
 	}
 
 	public String getName() {
@@ -130,5 +138,10 @@ public class Property {
 
 	public boolean isContained() {
 		return contained;
+	}
+	
+	public String getCollectionType()
+	{
+		return collectionType;
 	}
 }

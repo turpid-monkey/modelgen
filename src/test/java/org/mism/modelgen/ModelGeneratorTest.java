@@ -6,19 +6,26 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mdkt.compiler.InMemoryJavaCompiler;
 import org.mism.command.Command;
 import org.mism.command.CommandFactory;
 import org.mism.command.templates.ModifyCommandTemplate;
 import org.mism.modelgen.api.Clonable;
+import org.mism.modelgen.api.Mutable;
+import org.mism.modelgen.api.ObservableList;
 import org.mism.modelgen.ifaces.AbstractInterface;
 import org.mism.modelgen.ifaces.Branch;
 import org.mism.modelgen.ifaces.ChildInterface;
@@ -35,12 +42,41 @@ import org.mism.modelgen.ifaces.TreeSegment;
 
 public class ModelGeneratorTest extends ModelGenerator {
 
+	static class LocalAssertion {
+		boolean ok;
+		boolean triggered;
+
+		void check() {
+			assertTrue("test failed", ok);
+			assertTrue("test not executed", triggered);
+		}
+	}
+
 	@Test
 	public void testListProperty() throws Exception {
 		SomeTypeWithListProperty type = classify(SomeTypeWithListProperty.class);
-
 		assertNotNull(type);
 
+		final LocalAssertion test = new LocalAssertion();
+		((Mutable) type).getChangeSupport().addPropertyChangeListener(
+				"Numbers", evt -> {
+					test.ok = ((int) evt.getNewValue() == 5);
+					test.triggered = true;
+				});
+		Method m = type.getClass().getMethod("getNumbersRef");
+		ObservableList<Integer> list = (ObservableList<Integer>) m.invoke(type);
+		list.add(5);
+        test.check();
+        
+        assertEquals(1, type.getNumbers().size());
+        try
+        {
+        	type.getNumbers().add(1);
+        	fail("List should be immutable");
+        } catch (Exception e)
+        {
+        	assertTrue(e instanceof UnsupportedOperationException);
+        }
 	}
 
 	@Test
@@ -430,7 +466,7 @@ public class ModelGeneratorTest extends ModelGenerator {
 		DoubleContainmentPerson p = classify(DoubleContainmentPerson.class);
 
 		assertNotNull(p);
-		
+
 		fail("Tests for proper handling of multiple containments missing!");
 	}
 }

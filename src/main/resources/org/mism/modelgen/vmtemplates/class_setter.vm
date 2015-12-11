@@ -1,13 +1,12 @@
     public void set${prop.name}($prop.declaration _$prop.nameCc)
     {
-#if ($prop.containedType)
 #if ($prop.collection)
        this.${prop.nameCc}.replaceContent(_${prop.nameCc});
-#else
+#elseif ($prop.contained)
        // TODO handle relinking of parent here
        _${prop.nameCc}.setParent(this);
        this.${prop.nameCc} = _$prop.nameCc;
-#end
+       firePropertyChange("$prop.name", oldValue, _$prop.nameCc);
 #else
        $prop.type oldValue = this.$prop.nameCc;
        this.$prop.nameCc = _$prop.nameCc;
