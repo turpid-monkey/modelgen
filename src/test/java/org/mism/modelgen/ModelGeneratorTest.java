@@ -66,17 +66,15 @@ public class ModelGeneratorTest extends ModelGenerator {
 		Method m = type.getClass().getMethod("getNumbersRef");
 		ObservableList<Integer> list = (ObservableList<Integer>) m.invoke(type);
 		list.add(5);
-        test.check();
-        
-        assertEquals(1, type.getNumbers().size());
-        try
-        {
-        	type.getNumbers().add(1);
-        	fail("List should be immutable");
-        } catch (Exception e)
-        {
-        	assertTrue(e instanceof UnsupportedOperationException);
-        }
+		test.check();
+
+		assertEquals(1, type.getNumbers().size());
+		try {
+			type.getNumbers().add(1);
+			fail("List should be immutable");
+		} catch (Exception e) {
+			assertTrue(e instanceof UnsupportedOperationException);
+		}
 	}
 
 	@Test
