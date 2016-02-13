@@ -56,6 +56,20 @@ public class ModelGenerator {
             generateType(out, t);
             res.close();
         }
+        Resource factoryRes = set.open(model.getPackage() + ".ModelFactory");
+        Writer out = factoryRes.open();
+        generateFactory(out, model);
+        factoryRes.close();
+        
+        Resource visitorRes = set.open(model.getPackage() + ".ModelVisitor");
+        out = visitorRes.open();
+        generateVisitor(out, model);
+        visitorRes.close();
+        
+        Resource commandRes = set.open(model.getPackage() + ".ModelCommandFactory");
+        out = commandRes.open();
+        generateCommands(out, model);
+        commandRes.close();
     }
 
     public void generateType(Writer out, Type t) throws Exception {

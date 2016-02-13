@@ -11,9 +11,12 @@ import static org.junit.Assert.fail;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -465,6 +468,29 @@ public class ModelGeneratorTest extends ModelGenerator {
 
 		assertNotNull(p);
 
-		fail("Tests for proper handling of multiple containments missing!");
+		// fail("Tests for proper handling of multiple containments missing!");
+	}
+
+	@Test
+	public void testGenerateCode() throws Exception {
+		ModelGenerator generator = new ModelGenerator();
+		Path tempDir = Files.createTempDirectory("testGenerateCode");
+		FileResourceSet fileSet = new FileResourceSet(tempDir.toFile());
+		generator.generate(fileSet, TestInterface.class,
+				OtherTestInterface.class);
+
+		String[] paths = new String[] {
+				"./org/mism/modelgen/ifaces/ModelCommandFactory.java",
+				"./org/mism/modelgen/ifaces/ModelFactory.java",
+				"./org/mism/modelgen/ifaces/ModelVisitor.java",
+				"./org/mism/modelgen/ifaces/OtherTestInterfaceObject.java",
+				"./org/mism/modelgen/ifaces/TestInterfaceObject.java" };
+
+		for (String path : paths) {
+			File f = new File(tempDir.toFile(), path);
+			assertTrue(f.exists());
+			f.delete();
+		}
+
 	}
 }

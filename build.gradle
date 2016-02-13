@@ -10,7 +10,8 @@ task wrapper(type: Wrapper) {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'Modelgen', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'Modelgen', 'Implementation-Version': version, 
+        'Main-Class': 'org.mism.modelgen.CommandLineInterface'
     }
 }
 

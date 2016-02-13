@@ -5,6 +5,7 @@
 #elseif ($prop.contained)
        // TODO handle relinking of parent here
        _${prop.nameCc}.setParent(this);
+       ${prop.declaration} oldValue = this.${prop.nameCc};
        this.${prop.nameCc} = _$prop.nameCc;
        firePropertyChange("$prop.name", oldValue, _$prop.nameCc);
 #else
