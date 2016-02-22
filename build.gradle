@@ -10,6 +10,12 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.7'
 }
 
+run {    
+    systemProperty "targetDir", System.getProperty("targetDir")
+    systemProperty "classes", System.getProperty("classes")
+    systemProperty "cp", System.getProperty("cp")
+}
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'Modelgen', 'Implementation-Version': version, 
