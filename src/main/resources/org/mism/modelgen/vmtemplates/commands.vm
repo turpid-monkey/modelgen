@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.Collection;
 #foreach ($type in $model.types)
 import ${type.javaFQN};
+#foreach ($import in $type.imports)
+import $import;
+#end
 #end
 
 public class ModelCommandFactory implements CommandFactory
