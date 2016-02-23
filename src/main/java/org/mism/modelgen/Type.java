@@ -92,7 +92,7 @@ public class Type {
 
 		ArrayList<Type> ext3nds = new ArrayList<Type>();
 		for (Class<?> ifs : clzz.getInterfaces()) {
-			if (Contained.class.equals(ifs))
+			if (Contained.class.getName().equals(ifs.getName()))
 				continue;
 			Type parent = model.resolve(ifs);
 			if (parent == null)
