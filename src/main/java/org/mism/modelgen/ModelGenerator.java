@@ -51,7 +51,7 @@ public class ModelGenerator {
         Model model = new Model();
         model.init(classes);
         for (Type t : model.getTypes()) {
-            Resource res = set.open(t.getPackageName() + "." + t.getClzzName());
+            Resource res = set.open(t.getClzzPackageName() + "." + t.getClzzName());
             Writer out = res.open();
             generateType(out, t);
             res.close();
