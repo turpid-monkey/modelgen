@@ -59,7 +59,7 @@ public class CommandLineInterface {
 					}
 				}).toArray(URL[]::new);
 		try {
-			cli.classLoader = new URLClassLoader(urls);
+			cli.classLoader = new URLClassLoader(urls, CommandLineInterface.class.getClassLoader());
 		} catch (Exception e) {
 			exit(e, "Error in argument: Classloader instantiation failed, cp='"
 					+ cpArray + "'");

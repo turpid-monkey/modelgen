@@ -168,7 +168,7 @@ public class Type {
 		}
 		Collection<Property> props = new ArrayList<Property>();
 		for (Method m : list) {
-			if (Contained.class.equals(m.getDeclaringClass()))
+			if (Contained.class.getName().equals(m.getDeclaringClass().getName()))
 				continue;
 			Property f = new Property();
 			f.init(type, m);
