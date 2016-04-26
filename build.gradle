@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
 version = '0.1'
@@ -35,6 +36,18 @@ dependencies {
 
 test {
     systemProperties 'property': 'value'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'eu.mihosoft.dejabeans'
+            artifactId 'dejabeans'
+            version '0.1'
+
+            from components.java
+        }
+    }
 }
 
 uploadArchives {
